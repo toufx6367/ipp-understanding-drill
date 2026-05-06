@@ -1,0 +1,2701 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2367d1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="IPP理解ドリル">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>IPP理解ドリル</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef3f7;
+      --ink: #1f2430;
+      --muted: #697386;
+      --line: #dce3ea;
+      --blue: #2367d1;
+      --teal: #008c8c;
+      --coral: #e05b52;
+      --amber: #d79212;
+      --green: #178a53;
+      --violet: #6d5bd0;
+      --shadow: 0 18px 60px rgba(31, 36, 48, 0.12);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(35, 103, 209, 0.06), rgba(23, 138, 83, 0.04) 45%, rgba(224, 91, 82, 0.04)),
+        var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      min-height: 100vh;
+    }
+
+    .rail {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      border-radius: 8px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      font-weight: 850;
+      box-shadow: 0 14px 30px rgba(35, 103, 209, 0.25);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .segmented,
+    .filter-row {
+      display: grid;
+      gap: 7px;
+    }
+
+    .segmented {
+      grid-template-columns: repeat(2, 1fr);
+      margin-bottom: 12px;
+    }
+
+    .filter-row {
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 16px;
+    }
+
+    .segmented button,
+    .filter-row button,
+    .control {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      font-weight: 700;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .segmented button:hover,
+    .filter-row button:hover,
+    .control:hover,
+    .chapter-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .segmented button.active,
+    .filter-row button.active {
+      color: #fff;
+      border-color: transparent;
+      background: var(--ink);
+    }
+
+    .rail-section-title {
+      margin: 18px 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .chapter-list {
+      display: grid;
+      gap: 8px;
+      padding-bottom: 24px;
+    }
+
+    .chapter-button {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 52px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      text-align: left;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .chapter-button.active {
+      border-color: var(--blue);
+      box-shadow: 0 10px 25px rgba(35, 103, 209, 0.16);
+    }
+
+    .chapter-title {
+      font-size: 13px;
+      font-weight: 760;
+      line-height: 1.35;
+    }
+
+    .chapter-meta {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .stage {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+      padding: 28px;
+      min-width: 0;
+    }
+
+    .topline {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .meter-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .meter-label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .meter {
+      height: 10px;
+      border-radius: 999px;
+      background: #dfe6ed;
+      overflow: hidden;
+    }
+
+    .meter span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--amber));
+      transition: width 0.32s ease;
+    }
+
+    .stats {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .stat {
+      min-width: 86px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .quiz-shell,
+    .result-shell {
+      position: relative;
+      align-self: center;
+      width: min(940px, 100%);
+      margin: 0 auto;
+      padding: clamp(18px, 3vw, 32px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .quiz-shell.correct-pulse {
+      animation: correctPulse 620ms ease;
+    }
+
+    .quiz-shell.wrong-shake {
+      animation: wrongShake 480ms cubic-bezier(.36,.07,.19,.97);
+    }
+
+    .question-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 18px;
+    }
+
+    .kicker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(35, 103, 209, 0.1);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .tag.logic {
+      color: var(--teal);
+      background: rgba(0, 140, 140, 0.12);
+    }
+
+    .tag.debug {
+      color: var(--coral);
+      background: rgba(224, 91, 82, 0.12);
+    }
+
+    .tag.library {
+      color: var(--violet);
+      background: rgba(109, 91, 208, 0.12);
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    h2 {
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.2;
+      max-width: 760px;
+    }
+
+    .prompt {
+      margin: 0 0 18px;
+      color: #323947;
+      font-size: clamp(17px, 2vw, 21px);
+      font-weight: 760;
+      line-height: 1.55;
+    }
+
+    pre {
+      margin: 0 0 18px;
+      padding: 18px;
+      border-radius: 8px;
+      border: 1px solid #212a38;
+      background: #151b26;
+      color: #f2f7ff;
+      font-family: var(--mono);
+      font-size: clamp(13px, 1.5vw, 15px);
+      line-height: 1.62;
+      overflow: auto;
+      tab-size: 4;
+      white-space: pre;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .option {
+      position: relative;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 64px;
+      padding: 12px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      text-align: left;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+      overflow-wrap: anywhere;
+    }
+
+    .option:hover {
+      transform: translateY(-2px);
+      border-color: #aab8c7;
+    }
+
+    .option .letter {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      font-weight: 900;
+    }
+
+    .option.correct {
+      border-color: var(--green);
+      background: rgba(23, 138, 83, 0.08);
+      box-shadow: 0 12px 30px rgba(23, 138, 83, 0.16);
+    }
+
+    .option.wrong {
+      border-color: var(--coral);
+      background: rgba(224, 91, 82, 0.08);
+    }
+
+    .option.disabled {
+      cursor: default;
+    }
+
+    .feedback {
+      min-height: 0;
+      max-height: 0;
+      padding: 0 14px;
+      border: 0 solid transparent;
+      border-radius: 8px;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.28s ease, opacity 0.22s ease, padding 0.22s ease, border-width 0.22s ease;
+    }
+
+    .feedback.show {
+      max-height: 240px;
+      padding: 14px;
+      border-width: 1px;
+      opacity: 1;
+    }
+
+    .feedback.good {
+      border-color: rgba(23, 138, 83, 0.28);
+      background: rgba(23, 138, 83, 0.08);
+    }
+
+    .feedback.bad {
+      border-color: rgba(224, 91, 82, 0.28);
+      background: rgba(224, 91, 82, 0.08);
+    }
+
+    .feedback strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .feedback p {
+      color: #334052;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .action-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .primary,
+    .secondary,
+    .danger {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 8px;
+      font-weight: 850;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+    }
+
+    .primary {
+      color: #fff;
+      background: var(--blue);
+      box-shadow: 0 12px 24px rgba(35, 103, 209, 0.24);
+    }
+
+    .secondary {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .danger {
+      color: #fff;
+      background: var(--coral);
+    }
+
+    .primary:hover,
+    .secondary:hover,
+    .danger:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary:disabled,
+    .secondary:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .result-shell {
+      display: grid;
+      gap: 18px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .big-stat {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-2);
+    }
+
+    .big-stat strong {
+      display: block;
+      font-size: 28px;
+    }
+
+    .big-stat span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .fx-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    .spark {
+      position: absolute;
+      width: 10px;
+      height: 16px;
+      border-radius: 3px;
+      animation: sparkFly 860ms cubic-bezier(.08,.7,.22,1) forwards;
+    }
+
+    .zap {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--coral);
+      border-radius: 8px;
+      animation: zapFall 620ms ease forwards;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .footer-note a {
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    @keyframes correctPulse {
+      0% { box-shadow: var(--shadow); }
+      42% { box-shadow: 0 0 0 8px rgba(23, 138, 83, 0.14), 0 20px 70px rgba(23, 138, 83, 0.2); }
+      100% { box-shadow: var(--shadow); }
+    }
+
+    @keyframes wrongShake {
+      10%, 90% { transform: translateX(-1px); }
+      20%, 80% { transform: translateX(3px); }
+      30%, 50%, 70% { transform: translateX(-5px); }
+      40%, 60% { transform: translateX(5px); }
+    }
+
+    @keyframes sparkFly {
+      0% {
+        transform: translate(-50%, -50%) rotate(0deg) scale(0.7);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)) scale(1);
+        opacity: 0;
+      }
+    }
+
+    @keyframes zapFall {
+      0% {
+        transform: translate(-50%, -50%) scale(0.6) rotate(0deg);
+        opacity: 0.95;
+      }
+      100% {
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2) rotate(var(--rot));
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .rail {
+        position: static;
+        height: auto;
+        max-height: none;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .chapter-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-height: 430px;
+        overflow: auto;
+        padding-right: 4px;
+      }
+
+      .stage {
+        padding: 18px;
+      }
+
+      .topline {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        justify-content: stretch;
+      }
+
+      .stat {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .rail,
+      .stage {
+        padding: 14px;
+      }
+
+      .brand {
+        grid-template-columns: 46px 1fr;
+      }
+
+      .mark {
+        width: 46px;
+        height: 46px;
+      }
+
+      .segmented,
+      .filter-row,
+      .chapter-list,
+      .options,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chapter-list {
+        max-height: 310px;
+      }
+
+      .question-head {
+        grid-template-columns: 1fr;
+      }
+
+      .source-link {
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <div class="brand">
+        <div class="mark">IPP</div>
+        <div>
+          <h1>理解ドリル</h1>
+          <p>コードの動きで確かめる</p>
+        </div>
+      </div>
+
+      <div class="segmented" aria-label="出題モード">
+        <button type="button" class="active" data-mode="chapter">章別</button>
+        <button type="button" data-mode="all">全章</button>
+        <button type="button" data-mode="code">コード</button>
+        <button type="button" data-mode="weak">苦手</button>
+      </div>
+
+      <div class="filter-row" aria-label="章フィルタ">
+        <button type="button" class="active" data-filter="all">全部</button>
+        <button type="button" data-filter="main">本編</button>
+        <button type="button" data-filter="advanced">発展</button>
+      </div>
+
+      <div class="rail-section-title">Chapters</div>
+      <div id="chapterList" class="chapter-list"></div>
+    </aside>
+
+    <main class="stage">
+      <div class="topline">
+        <div class="meter-wrap">
+          <div class="meter-label">
+            <span id="meterText">0 / 0</span>
+            <span id="modeText">章別</span>
+          </div>
+          <div class="meter" aria-hidden="true"><span id="meterBar"></span></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong id="correctCount">0</strong><span>正解</span></div>
+          <div class="stat"><strong id="wrongCount">0</strong><span>見直し</span></div>
+          <div class="stat"><strong id="masteryCount">0%</strong><span>定着</span></div>
+        </div>
+      </div>
+
+      <section id="quizShell" class="quiz-shell">
+        <div class="question-head">
+          <div>
+            <div class="kicker">
+              <span id="chapterTag" class="tag">1-1</span>
+              <span id="skillTag" class="tag logic">code</span>
+            </div>
+            <h2 id="questionTitle">問題を読み込み中</h2>
+          </div>
+          <a id="sourceLink" class="source-link" href="#" target="_blank" rel="noopener">教材</a>
+        </div>
+
+        <p id="prompt" class="prompt"></p>
+        <pre id="codeBlock" class="hidden"><code></code></pre>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+
+        <div class="actions">
+          <div class="action-group">
+            <button id="prevBtn" class="secondary" type="button">前へ</button>
+            <button id="retryBtn" class="secondary" type="button">もう一度</button>
+          </div>
+          <div class="action-group">
+            <button id="nextBtn" class="primary" type="button">次へ</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="resultShell" class="result-shell hidden">
+        <div>
+          <div class="kicker">
+            <span class="tag">Result</span>
+          </div>
+          <h2 id="resultTitle">結果</h2>
+        </div>
+        <div class="result-grid">
+          <div class="big-stat"><strong id="resultScore">0</strong><span>今回の正解</span></div>
+          <div class="big-stat"><strong id="resultRate">0%</strong><span>今回の正答率</span></div>
+          <div class="big-stat"><strong id="resultMiss">0</strong><span>復習候補</span></div>
+        </div>
+        <div class="actions">
+          <button id="reviewBtn" class="secondary" type="button">間違いを復習</button>
+          <div class="action-group">
+            <button id="againBtn" class="secondary" type="button">もう1セットやる</button>
+            <button id="nextSetBtn" class="primary" type="button">次のセットへ進む</button>
+          </div>
+        </div>
+      </section>
+
+      <p class="footer-note">
+        問題は教材の章構成に合わせたオリジナル作問です。出典:
+        <a href="https://utokyo-ipp.github.io/index.html" target="_blank" rel="noopener">Pythonプログラミング入門</a>
+      </p>
+    </main>
+  </div>
+  <div id="fxLayer" class="fx-layer" aria-hidden="true"></div>
+
+  <script>
+    const chapters = [
+      { id: "1-0", group: "main", title: "1-0. Colaboratory (Colab) の使い方", url: "https://utokyo-ipp.github.io/1/1-0.html" },
+      { id: "1-1", group: "main", title: "1-1. 数値演算", url: "https://utokyo-ipp.github.io/1/1-1.html" },
+      { id: "1-2", group: "main", title: "1-2. 変数と関数の基礎", url: "https://utokyo-ipp.github.io/1/1-2.html" },
+      { id: "1-3", group: "main", title: "1-3. 論理・比較演算と条件分岐の基礎", url: "https://utokyo-ipp.github.io/1/1-3.html" },
+      { id: "1-4", group: "main", title: "1-4. テストとデバッグ", url: "https://utokyo-ipp.github.io/1/1-4.html" },
+      { id: "2-1", group: "main", title: "2-1. 文字列 (string)", url: "https://utokyo-ipp.github.io/2/2-1.html" },
+      { id: "2-2", group: "main", title: "2-2. リスト (list)", url: "https://utokyo-ipp.github.io/2/2-2.html" },
+      { id: "2-3", group: "main", title: "2-3. 条件分岐", url: "https://utokyo-ipp.github.io/2/2-3.html" },
+      { id: "3-1", group: "main", title: "3-1. 辞書 (dictionary)", url: "https://utokyo-ipp.github.io/3/3-1.html" },
+      { id: "3-2", group: "main", title: "3-2. 繰り返し", url: "https://utokyo-ipp.github.io/3/3-2.html" },
+      { id: "3-3", group: "main", title: "3-3. 関数", url: "https://utokyo-ipp.github.io/3/3-3.html" },
+      { id: "4-1", group: "main", title: "4-1. ファイル入出力の基本", url: "https://utokyo-ipp.github.io/4/4-1.html" },
+      { id: "4-2", group: "main", title: "4-2. イテラブルとイテレータ", url: "https://utokyo-ipp.github.io/4/4-2.html" },
+      { id: "4-3", group: "main", title: "4-3. ディレクトリと木構造", url: "https://utokyo-ipp.github.io/4/4-3.html" },
+      { id: "5-1", group: "main", title: "5-1. モジュールの使い方", url: "https://utokyo-ipp.github.io/5/5-1.html" },
+      { id: "5-2", group: "main", title: "5-2. モジュールの作り方", url: "https://utokyo-ipp.github.io/5/5-2.html" },
+      { id: "5-3", group: "main", title: "5-3. NumPyライブラリ", url: "https://utokyo-ipp.github.io/5/5-3.html" },
+      { id: "6-1", group: "main", title: "6-1. 内包表記", url: "https://utokyo-ipp.github.io/6/6-1.html" },
+      { id: "6-2", group: "main", title: "6-2. 高階関数", url: "https://utokyo-ipp.github.io/6/6-2.html" },
+      { id: "6-3", group: "main", title: "6-3. クラス", url: "https://utokyo-ipp.github.io/6/6-3.html" },
+      { id: "7-1", group: "main", title: "7-1. pandasライブラリ", url: "https://utokyo-ipp.github.io/7/7-1.html" },
+      { id: "7-2", group: "main", title: "7-2. scikit-learnライブラリ", url: "https://utokyo-ipp.github.io/7/7-2.html" },
+      { id: "A-1", group: "advanced", title: "▲Jupyter Notebook の使い方", url: "https://utokyo-ipp.github.io/appendix/1-jupyter-notebook.html" },
+      { id: "A-2", group: "advanced", title: "▲セット (set)", url: "https://utokyo-ipp.github.io/appendix/2-set.html" },
+      { id: "A-3", group: "advanced", title: "▲再帰", url: "https://utokyo-ipp.github.io/appendix/3-recursion.html" },
+      { id: "A-4", group: "advanced", title: "▲簡単なデータの可視化", url: "https://utokyo-ipp.github.io/appendix/3-visualization.html" },
+      { id: "A-5", group: "advanced", title: "▲CSVファイルの入出力", url: "https://utokyo-ipp.github.io/appendix/4-csv.html" },
+      { id: "A-6", group: "advanced", title: "▲Bokehライブラリ", url: "https://utokyo-ipp.github.io/appendix/5-bokeh.html" },
+      { id: "A-7", group: "advanced", title: "▲Pythonスクリプトとコマンドライン実行", url: "https://utokyo-ipp.github.io/appendix/5-command.html" },
+      { id: "A-8", group: "advanced", title: "▲Matplotlibライブラリ", url: "https://utokyo-ipp.github.io/appendix/5-matplotlib.html" },
+      { id: "A-9", group: "advanced", title: "▲正規表現", url: "https://utokyo-ipp.github.io/appendix/5-re.html" }
+    ];
+
+    const questions = [
+      {
+        id: "q-1-0-1", chapter: "1-0", skill: "code", tag: "実行順",
+        title: "セルの状態を読む",
+        prompt: "Colabで次の2つのコードセルを上から順に実行したあと、2つ目のセルの最後に表示される値は？",
+        code: "x = 1\n\n# 次のセル\nx = x + 2\nx",
+        choices: ["1", "2", "3", "NameError"],
+        answer: 2,
+        explain: "ノートブックは実行済みセルの変数を保持します。1つ目で x は1、2つ目で3になります。"
+      },
+      {
+        id: "q-1-0-2", chapter: "1-0", skill: "debug", tag: "セル操作",
+        title: "止まらないセル",
+        prompt: "無限ループのセルを実行してしまったとき、次に取る操作として適切なのは？",
+        code: "while True:\n    pass",
+        choices: ["セルの実行を中断する", "同じセルをもう一度実行する", "コードセルをテキストセルに変える", "ページを印刷する"],
+        answer: 0,
+        explain: "処理が終わらないときは実行中断を使います。原因を直してから再実行します。"
+      },
+      {
+        id: "q-1-0-3", chapter: "1-0", skill: "debug", tag: "ノートブック",
+        title: "結果が変わる理由",
+        prompt: "上から読み返すと正しそうなのに、実行結果だけがおかしい。まず疑うべき原因は？",
+        code: "a = 10\nb = a + 1\nb",
+        choices: ["セルを順番通りに実行していない", "Pythonでは変数が使えない", "コメントが実行されている", "整数は保存できない"],
+        answer: 0,
+        explain: "ノートブックでは見た目の順序と実行順がずれることがあります。必要なら先頭から実行し直します。"
+      },
+      {
+        id: "q-1-1-1", chapter: "1-1", skill: "code", tag: "演算子",
+        title: "商と余り",
+        prompt: "次のコードの出力は？",
+        code: "a = 7 // 2\nb = 7 % 2\nc = 7 / 2\nprint(a, b, c)",
+        choices: ["3 1 3.5", "3.5 1 3.5", "4 1 3", "3 2 3.5"],
+        answer: 0,
+        explain: "// は整数除算、% は余り、/ は実数の割り算です。"
+      },
+      {
+        id: "q-1-1-2", chapter: "1-1", skill: "code", tag: "優先順位",
+        title: "括弧とべき乗",
+        prompt: "次の式の値は？",
+        code: "(2 + 3) * 4 ** 2",
+        choices: ["80", "400", "100", "40"],
+        answer: 0,
+        explain: "括弧が先、次に 4 ** 2 が16、最後に 5 * 16 で80です。"
+      },
+      {
+        id: "q-1-1-3", chapter: "1-1", skill: "debug", tag: "数値誤差",
+        title: "実数の比較",
+        prompt: "次の結果について、最も適切な理解は？",
+        code: "print(0.1 + 0.2 == 0.3)",
+        choices: ["Falseになることがある。2進浮動小数点の誤差があるため", "必ずTrue。小数は正確に表せるため", "SyntaxErrorになる", "整数同士の比較に変換される"],
+        answer: 0,
+        explain: "多くの小数は2進数で正確に表せません。近さで比較する設計が必要です。"
+      },
+      {
+        id: "q-1-2-1", chapter: "1-2", skill: "function", tag: "返値",
+        title: "returnの値",
+        prompt: "次のコードの出力は？",
+        code: "def double_plus_one(x):\n    y = x * 2\n    return y + 1\n\nprint(double_plus_one(4))",
+        choices: ["9", "8", "5", "None"],
+        answer: 0,
+        explain: "x * 2 が8、return で9が呼び出し元へ返ります。"
+      },
+      {
+        id: "q-1-2-2", chapter: "1-2", skill: "debug", tag: "printとreturn",
+        title: "表示と返値",
+        prompt: "この関数を式の中で使うと、何が問題になる？",
+        code: "def show_square(x):\n    print(x * x)\n\nanswer = show_square(3) + 1",
+        choices: ["show_square(3) の返値が None なので足し算できない", "print は数値を2回返す", "関数名に _ が使えない", "x * x は文字列になる"],
+        answer: 0,
+        explain: "print は画面に表示するだけです。return がない関数の返値は None です。"
+      },
+      {
+        id: "q-1-2-3", chapter: "1-2", skill: "function", tag: "ローカル変数",
+        title: "関数内の変数",
+        prompt: "次のコードを実行するとどうなる？",
+        code: "def set_value():\n    local_value = 10\n\nset_value()\nprint(local_value)",
+        choices: ["NameErrorになる", "10と表示される", "Noneと表示される", "0と表示される"],
+        answer: 0,
+        explain: "local_value は関数の中だけで有効なローカル変数です。外側からは参照できません。"
+      },
+      {
+        id: "q-1-3-1", chapter: "1-3", skill: "logic", tag: "論理式",
+        title: "not, or, and",
+        prompt: "次の式の値は？",
+        code: "not (3 < 2 or 4 == 4)",
+        choices: ["False", "True", "None", "SyntaxError"],
+        answer: 0,
+        explain: "3 < 2 はFalse、4 == 4 はTrue。False or True はTrueで、それを not するのでFalseです。"
+      },
+      {
+        id: "q-1-3-2", chapter: "1-3", skill: "function", tag: "条件分岐",
+        title: "分岐する関数",
+        prompt: "次のコードの出力は？",
+        code: "def sign(x):\n    if x > 0:\n        return \"plus\"\n    if x < 0:\n        return \"minus\"\n    return \"zero\"\n\nprint(sign(-2))",
+        choices: ["minus", "plus", "zero", "None"],
+        answer: 0,
+        explain: "-2 は x < 0 を満たすので \"minus\" が返ります。"
+      },
+      {
+        id: "q-1-3-3", chapter: "1-3", skill: "function", tag: "None",
+        title: "何も返さない分岐",
+        prompt: "次のコードの出力は？",
+        code: "def check(x):\n    if x > 0:\n        return True\n\nprint(check(0))",
+        choices: ["None", "False", "True", "0"],
+        answer: 0,
+        explain: "x > 0 を満たさず return に到達しないため、関数は None を返します。"
+      },
+      {
+        id: "q-1-4-1", chapter: "1-4", skill: "debug", tag: "assert",
+        title: "テストの失敗",
+        prompt: "次のコードで起きることは？",
+        code: "def half(x):\n    return x / 2\n\nassert half(4) == 2\nassert half(3) == 1",
+        choices: ["2つ目のassertでAssertionErrorになる", "どちらも通る", "1つ目のassertでSyntaxErrorになる", "half(3) は1を返す"],
+        answer: 0,
+        explain: "half(3) は1.5です。期待値1とは違うため assert が失敗します。"
+      },
+      {
+        id: "q-1-4-2", chapter: "1-4", skill: "debug", tag: "エラー分類",
+        title: "実行時エラー",
+        prompt: "このコードのエラー分類として最も近いものは？",
+        code: "print(10 / 0)",
+        choices: ["実行時エラー", "構文エラー", "論理エラー", "テスト成功"],
+        answer: 0,
+        explain: "文法は正しいですが、実行時に0で割ろうとして ZeroDivisionError になります。"
+      },
+      {
+        id: "q-1-4-3", chapter: "1-4", skill: "debug", tag: "論理エラー",
+        title: "返し忘れ",
+        prompt: "関数 add_tax(100) を使った式がうまく動かない。原因は？",
+        code: "def add_tax(price):\n    price * 1.1\n\ntotal = add_tax(100) + 20",
+        choices: ["return がないので add_tax(100) は None", "price という変数名が予約語", "1.1 はPythonで使えない", "関数には引数を渡せない"],
+        answer: 0,
+        explain: "式を計算しても return しなければ呼び出し元には値が返りません。"
+      },
+      {
+        id: "q-2-1-1", chapter: "2-1", skill: "code", tag: "インデックス",
+        title: "文字列の位置",
+        prompt: "次のコードの出力は？",
+        code: "s = \"Python\"\nprint(s[1], s[-1])",
+        choices: ["y n", "P n", "t o", "IndexError"],
+        answer: 0,
+        explain: "インデックスは0始まりです。s[1] は y、s[-1] は最後の n です。"
+      },
+      {
+        id: "q-2-1-2", chapter: "2-1", skill: "code", tag: "スライス",
+        title: "1つ飛ばし",
+        prompt: "次の式の値は？",
+        code: "\"abcdef\"[1:5:2]",
+        choices: ["\"bd\"", "\"bcde\"", "\"ace\"", "\"be\""],
+        answer: 0,
+        explain: "1番目から5番目の手前までを2つおきに取るので b と d です。"
+      },
+      {
+        id: "q-2-1-3", chapter: "2-1", skill: "code", tag: "メソッド",
+        title: "replaceの性質",
+        prompt: "次のコードの出力は？",
+        code: "s = \"cat\"\nt = s.replace(\"c\", \"h\")\nprint(s, t)",
+        choices: ["cat hat", "hat hat", "cat cat", "hat cat"],
+        answer: 0,
+        explain: "文字列は変更不可です。replace は新しい文字列を作り、元の s は変わりません。"
+      },
+      {
+        id: "q-2-2-1", chapter: "2-2", skill: "code", tag: "別名",
+        title: "同じリストを指す",
+        prompt: "次のコードの出力は？",
+        code: "xs = [1, 2, 3]\nys = xs\nys.append(4)\nprint(xs)",
+        choices: ["[1, 2, 3, 4]", "[1, 2, 3]", "[4]", "NameError"],
+        answer: 0,
+        explain: "ys = xs はコピーではなく同じリストへの別名を作ります。append の結果は xs からも見えます。"
+      },
+      {
+        id: "q-2-2-2", chapter: "2-2", skill: "debug", tag: "破壊的操作",
+        title: "sortの返値",
+        prompt: "次のコードの出力は？",
+        code: "xs = [3, 1, 2]\ny = xs.sort()\nprint(xs, y)",
+        choices: ["[1, 2, 3] None", "[3, 1, 2] [1, 2, 3]", "[1, 2, 3] [1, 2, 3]", "None [1, 2, 3]"],
+        answer: 0,
+        explain: "list.sort() はリスト自身を並べ替える破壊的操作で、返値は None です。"
+      },
+      {
+        id: "q-2-2-3", chapter: "2-2", skill: "code", tag: "スライス",
+        title: "リストの一部",
+        prompt: "次のコードの出力は？",
+        code: "xs = [0, 1, 2, 3]\nprint(xs[1:3])",
+        choices: ["[1, 2]", "[1, 2, 3]", "[0, 1, 2]", "[2, 3]"],
+        answer: 0,
+        explain: "スライスの終点は含まれません。1番目と2番目の要素が取り出されます。"
+      },
+      {
+        id: "q-2-3-1", chapter: "2-3", skill: "logic", tag: "elif",
+        title: "最初に真になった分岐",
+        prompt: "次のコードの出力は？",
+        code: "x = 6\nif x % 2 == 0:\n    print(\"even\")\nelif x % 3 == 0:\n    print(\"three\")\nelse:\n    print(\"other\")",
+        choices: ["even", "three", "even と three", "other"],
+        answer: 0,
+        explain: "if が真になった時点で elif は評価されません。"
+      },
+      {
+        id: "q-2-3-2", chapter: "2-3", skill: "logic", tag: "短絡評価",
+        title: "0で割らない条件",
+        prompt: "次のコードについて正しい説明は？",
+        code: "x = 0\nif x != 0 and 10 / x > 1:\n    print(\"ok\")\nelse:\n    print(\"skip\")",
+        choices: ["ZeroDivisionErrorにならず skip と表示される", "ZeroDivisionErrorになる", "ok と表示される", "SyntaxErrorになる"],
+        answer: 0,
+        explain: "and は左がFalseなら右を評価しません。10 / x は実行されません。"
+      },
+      {
+        id: "q-2-3-3", chapter: "2-3", skill: "debug", tag: "インデント",
+        title: "elseの対応",
+        prompt: "このコードで else はどの if に対応している？",
+        code: "x = 3\nif x > 0:\n    if x % 2 == 0:\n        print(\"A\")\n    else:\n        print(\"B\")",
+        choices: ["内側の if x % 2 == 0", "外側の if x > 0", "どちらにも対応しない", "for文に対応する"],
+        answer: 0,
+        explain: "Pythonではインデントでブロックを決めます。この else は内側の if と同じ深さです。"
+      },
+      {
+        id: "q-3-1-1", chapter: "3-1", skill: "code", tag: "get",
+        title: "キーがないとき",
+        prompt: "次のコードの出力は？",
+        code: "d = {\"a\": 1}\nprint(d.get(\"b\", 0))",
+        choices: ["0", "None", "KeyError", "\"b\""],
+        answer: 0,
+        explain: "get はキーがない場合の既定値を指定できます。ここでは0です。"
+      },
+      {
+        id: "q-3-1-2", chapter: "3-1", skill: "code", tag: "キー",
+        title: "同じキーを2回",
+        prompt: "次のコードの出力は？",
+        code: "d = {\"a\": 1, \"a\": 2}\nprint(len(d), d[\"a\"])",
+        choices: ["1 2", "2 1", "2 2", "1 1"],
+        answer: 0,
+        explain: "辞書のキーは重複できません。後の値が残ります。"
+      },
+      {
+        id: "q-3-1-3", chapter: "3-1", skill: "code", tag: "items",
+        title: "キーと値の取り出し",
+        prompt: "辞書 scores のキーと値を両方使って合計を作る書き方として適切なのは？",
+        code: "scores = {\"A\": 10, \"B\": 20}\ntotal = 0\n# ここに入れる",
+        choices: ["for name, score in scores.items():\n    total += score", "for name, score in scores:\n    total += score", "for score in scores.keys():\n    total += scores", "for scores.items() in name:\n    total += name"],
+        answer: 0,
+        explain: "items() はキーと値の組を返します。for name, score in ... と分解できます。"
+      },
+      {
+        id: "q-3-2-1", chapter: "3-2", skill: "code", tag: "range",
+        title: "rangeの終点",
+        prompt: "次のコードの出力は？",
+        code: "print(list(range(2, 7, 2)))",
+        choices: ["[2, 4, 6]", "[2, 4, 6, 7]", "[0, 2, 4, 6]", "[2, 3, 4, 5, 6]"],
+        answer: 0,
+        explain: "range の終点7は含まれず、2から2ずつ進みます。"
+      },
+      {
+        id: "q-3-2-2", chapter: "3-2", skill: "logic", tag: "break",
+        title: "breakまでの合計",
+        prompt: "次のコードの出力は？",
+        code: "total = 0\nfor n in [1, 2, 3, 4]:\n    if n == 3:\n        break\n    total += n\nprint(total)",
+        choices: ["3", "6", "10", "1"],
+        answer: 0,
+        explain: "n が3になった時点でループを抜けるため、1 + 2 だけが足されます。"
+      },
+      {
+        id: "q-3-2-3", chapter: "3-2", skill: "code", tag: "enumerate",
+        title: "番号付きループ",
+        prompt: "次のコードの出力は？",
+        code: "pairs = []\nfor i, ch in enumerate(\"ab\", start=1):\n    pairs.append((i, ch))\nprint(pairs)",
+        choices: ["[(1, 'a'), (2, 'b')]", "[(0, 'a'), (1, 'b')]", "[('a', 1), ('b', 2)]", "[(1, 'b'), (2, 'a')]"],
+        answer: 0,
+        explain: "enumerate は番号と要素を返します。start=1 なので番号は1からです。"
+      },
+      {
+        id: "q-3-3-1", chapter: "3-3", skill: "function", tag: "デフォルト引数",
+        title: "省略した引数",
+        prompt: "次のコードの出力は？",
+        code: "def add(a, b=10):\n    return a + b\n\nprint(add(3), add(3, 4))",
+        choices: ["13 7", "3 4", "13 13", "7 13"],
+        answer: 0,
+        explain: "b を省略すると10が使われます。2回目は b に4を渡しています。"
+      },
+      {
+        id: "q-3-3-2", chapter: "3-3", skill: "function", tag: "キーワード引数",
+        title: "名前で渡す",
+        prompt: "次のコードの出力は？",
+        code: "def area(width, height):\n    return width * height\n\nprint(area(height=2, width=5))",
+        choices: ["10", "7", "TypeError", "25"],
+        answer: 0,
+        explain: "キーワード引数では名前で対応づけるため、順序を入れ替えても width=5, height=2 です。"
+      },
+      {
+        id: "q-3-3-3", chapter: "3-3", skill: "function", tag: "スコープ",
+        title: "外側のx",
+        prompt: "次のコードの出力は？",
+        code: "x = 5\n\ndef f():\n    x = 2\n    return x\n\nprint(f(), x)",
+        choices: ["2 5", "2 2", "5 5", "5 2"],
+        answer: 0,
+        explain: "関数内の x はローカル変数です。外側の x は5のままです。"
+      },
+      {
+        id: "q-4-1-1", chapter: "4-1", skill: "debug", tag: "with",
+        title: "ファイルの閉じ忘れ",
+        prompt: "ファイルを読み終えた後の close を忘れにくい書き方は？",
+        code: "# data.txt を読む",
+        choices: ["with open(\"data.txt\") as f:\n    text = f.read()", "f = open(\"data.txt\")\ntext = close(f)", "open.with(\"data.txt\") as f:\n    text = read(f)", "with read(\"data.txt\") as open:\n    text = f"],
+        answer: 0,
+        explain: "with 文を使うとブロックを抜けるときにファイルが閉じられます。"
+      },
+      {
+        id: "q-4-1-2", chapter: "4-1", skill: "code", tag: "readline",
+        title: "行末の改行",
+        prompt: "ファイルの1行目が abc で改行されているとき、line に含まれる可能性が高いものは？",
+        code: "with open(\"sample.txt\") as f:\n    line = f.readline()",
+        choices: ["\"abc\\n\"", "\"abc\"", "\"\\nabc\"", "['abc']"],
+        answer: 0,
+        explain: "readline は通常、行末の改行文字も含めて読み込みます。必要なら strip などで取り除きます。"
+      },
+      {
+        id: "q-4-1-3", chapter: "4-1", skill: "debug", tag: "書き込み",
+        title: "wモード",
+        prompt: "既存ファイルを open(path, 'w') で開くとどうなる？",
+        code: "with open(\"memo.txt\", \"w\") as f:\n    f.write(\"new\")",
+        choices: ["既存内容は消えて new が書かれる", "既存内容の末尾に new が足される", "読み込み専用で開く", "必ずFileNotFoundErrorになる"],
+        answer: 0,
+        explain: "'w' は書き込み用で、既存ファイルがあれば内容を空にしてから書きます。追記は 'a' です。"
+      },
+      {
+        id: "q-4-2-1", chapter: "4-2", skill: "code", tag: "next",
+        title: "イテレータを進める",
+        prompt: "次のコードで3回目の next はどうなる？",
+        code: "it = iter([10, 20])\nprint(next(it))\nprint(next(it))\nprint(next(it))",
+        choices: ["StopIterationになる", "20がもう一度表示される", "Noneが表示される", "10に戻る"],
+        answer: 0,
+        explain: "イテレータは順に消費されます。要素が尽きると StopIteration です。"
+      },
+      {
+        id: "q-4-2-2", chapter: "4-2", skill: "code", tag: "消費",
+        title: "使い切ったイテレータ",
+        prompt: "次のコードの出力は？",
+        code: "it = iter([1, 2])\nprint(list(it))\nprint(list(it))",
+        choices: ["[1, 2]\n[]", "[1, 2]\n[1, 2]", "[]\n[1, 2]", "StopIteration"],
+        answer: 0,
+        explain: "1回目の list(it) でイテレータを最後まで消費します。2回目には残りがありません。"
+      },
+      {
+        id: "q-4-2-3", chapter: "4-2", skill: "logic", tag: "iterable",
+        title: "for文ができる理由",
+        prompt: "for x in data: が動くために data に求められる性質は？",
+        code: "for x in data:\n    print(x)",
+        choices: ["data がイテラブルであること", "data が必ずリストであること", "data が必ず辞書であること", "data が数値であること"],
+        answer: 0,
+        explain: "for文はリストに限らず、文字列・辞書・ファイルなどのイテラブルを処理できます。"
+      },
+      {
+        id: "q-4-3-1", chapter: "4-3", skill: "library", tag: "パス",
+        title: "パスを組み立てる",
+        prompt: "OSごとの区切り文字の違いを吸収しやすい書き方は？",
+        code: "import os\n# data フォルダの sample.txt",
+        choices: ["os.path.join(\"data\", \"sample.txt\")", "\"data/sample.txt\" だけを常に使う", "\"data\" + \"sample.txt\"", "os.getcwd(\"data\", \"sample.txt\")"],
+        answer: 0,
+        explain: "os.path.join は実行環境に合わせてパスを組み立てます。"
+      },
+      {
+        id: "q-4-3-2", chapter: "4-3", skill: "logic", tag: "相対パス",
+        title: "相対パスの基準",
+        prompt: "open('data/a.txt') のような相対パスは、基本的に何を基準に解決される？",
+        code: "with open(\"data/a.txt\") as f:\n    text = f.read()",
+        choices: ["カレントワーキングディレクトリ", "Pythonをインストールしたフォルダ", "ファイル名のアルファベット順", "ブラウザのダウンロードフォルダ"],
+        answer: 0,
+        explain: "相対パスは現在の作業ディレクトリを基準にします。"
+      },
+      {
+        id: "q-4-3-3", chapter: "4-3", skill: "logic", tag: "木構造",
+        title: "親子関係で見る",
+        prompt: "ディレクトリ構造を木として見るとき、フォルダ data の中に images がある関係は？",
+        code: "project/\n  data/\n    images/\n      a.png",
+        choices: ["data が images の親", "images が data の親", "project と images は同じ階層", "a.png が data の親"],
+        answer: 0,
+        explain: "中に含む側が親です。data の子として images があり、その子に a.png があります。"
+      },
+      {
+        id: "q-5-1-1", chapter: "5-1", skill: "library", tag: "import",
+        title: "モジュール名から呼ぶ",
+        prompt: "次のコードで正しく平方根を計算する呼び出しは？",
+        code: "import math\n# 9の平方根",
+        choices: ["math.sqrt(9)", "sqrt(9)", "math(9).sqrt", "import.sqrt(9)"],
+        answer: 0,
+        explain: "import math では math という名前を通して関数を呼びます。"
+      },
+      {
+        id: "q-5-1-2", chapter: "5-1", skill: "library", tag: "from",
+        title: "関数だけをimport",
+        prompt: "次のコードの後、正しい呼び出しは？",
+        code: "from math import sqrt",
+        choices: ["sqrt(16)", "math.sqrt(16)", "math::sqrt(16)", "from.sqrt(16)"],
+        answer: 0,
+        explain: "from math import sqrt では sqrt という名前が直接使えます。math という名前はこの文だけでは定義されません。"
+      },
+      {
+        id: "q-5-1-3", chapter: "5-1", skill: "library", tag: "as",
+        title: "別名でimport",
+        prompt: "NumPyを np という別名で使う一般的な書き方は？",
+        code: "# NumPyを使いたい",
+        choices: ["import numpy as np", "from numpy as np import *", "import np from numpy", "numpy import as np"],
+        answer: 0,
+        explain: "import モジュール名 as 別名 で、以後 np.array などと書けます。"
+      },
+      {
+        id: "q-5-2-1", chapter: "5-2", skill: "library", tag: "自作モジュール",
+        title: "ファイル名とモジュール名",
+        prompt: "mycalc.py に twice が定義されている。別ファイルから正しく呼ぶ書き方は？",
+        code: "# mycalc.py\n# def twice(x):\n#     return x * 2",
+        choices: ["import mycalc\nprint(mycalc.twice(3))", "import mycalc.py\nprint(mycalc.py.twice(3))", "from mycalc.py import twice", "print(twice.mycalc(3))"],
+        answer: 0,
+        explain: "import では通常 .py を付けません。モジュール名 mycalc から関数を参照します。"
+      },
+      {
+        id: "q-5-2-2", chapter: "5-2", skill: "debug", tag: "__main__",
+        title: "import時に実行しない",
+        prompt: "モジュールをimportしたときだけテストコードが勝手に動くのを避けるには？",
+        code: "def twice(x):\n    return x * 2\n\n# テストコードを書く場所",
+        choices: ["if __name__ == \"__main__\": の下に置く", "関数名をすべて大文字にする", "import を2回書く", "ファイル名を main.py に固定する"],
+        answer: 0,
+        explain: "__name__ が \"__main__\" になるのは、そのファイルを直接実行したときです。"
+      },
+      {
+        id: "q-5-2-3", chapter: "5-2", skill: "library", tag: "名前空間",
+        title: "関数名の衝突",
+        prompt: "複数のモジュールに同じ関数名 run があるとき、衝突を避けやすい使い方は？",
+        code: "import a\nimport b",
+        choices: ["a.run() と b.run() のようにモジュール名を付ける", "run() だけを使う", "同じ名前の関数はPythonでは定義できない", "import を使わない"],
+        answer: 0,
+        explain: "モジュール名を付けて参照すると、どの run か明確になります。"
+      },
+      {
+        id: "q-5-3-1", chapter: "5-3", skill: "library", tag: "ndarray",
+        title: "配列の演算",
+        prompt: "次のコードの出力に最も近いものは？",
+        code: "import numpy as np\na = np.array([1, 2, 3])\nprint(a * 2)",
+        choices: ["[2 4 6]", "[1 2 3 1 2 3]", "[3 4 5]", "TypeError"],
+        answer: 0,
+        explain: "NumPy配列の * は要素ごとのスカラ演算です。リストの繰り返しとは違います。"
+      },
+      {
+        id: "q-5-3-2", chapter: "5-3", skill: "library", tag: "真理値配列",
+        title: "条件で取り出す",
+        prompt: "次のコードの出力に最も近いものは？",
+        code: "import numpy as np\na = np.array([1, 3, 2])\nprint(a[a > 1])",
+        choices: ["[3 2]", "[False True True]", "[1]", "[1 3 2]"],
+        answer: 0,
+        explain: "a > 1 は真理値配列を作り、それを添字に使うとTrueの要素だけを取り出せます。"
+      },
+      {
+        id: "q-5-3-3", chapter: "5-3", skill: "library", tag: "shape",
+        title: "多次元配列",
+        prompt: "次のコードの出力は？",
+        code: "import numpy as np\na = np.array([[1, 2, 3], [4, 5, 6]])\nprint(a.shape)",
+        choices: ["(2, 3)", "(3, 2)", "(6,)", "(2,)"],
+        answer: 0,
+        explain: "2行3列の配列なので shape は (2, 3) です。"
+      },
+      {
+        id: "q-6-1-1", chapter: "6-1", skill: "code", tag: "内包表記",
+        title: "平方のリスト",
+        prompt: "次のコードの出力は？",
+        code: "print([x * x for x in range(4)])",
+        choices: ["[0, 1, 4, 9]", "[1, 4, 9, 16]", "[0, 2, 4, 6]", "[4, 9, 16]"],
+        answer: 0,
+        explain: "range(4) は0,1,2,3です。それぞれを2乗します。"
+      },
+      {
+        id: "q-6-1-2", chapter: "6-1", skill: "logic", tag: "条件付き",
+        title: "条件付き内包表記",
+        prompt: "次のコードの出力は？",
+        code: "print([x for x in range(6) if x % 2 == 0])",
+        choices: ["[0, 2, 4]", "[2, 4, 6]", "[1, 3, 5]", "[0, 1, 2, 3, 4, 5]"],
+        answer: 0,
+        explain: "if 条件を満たす偶数だけがリストに入ります。"
+      },
+      {
+        id: "q-6-1-3", chapter: "6-1", skill: "code", tag: "入れ子",
+        title: "内包表記のループ順",
+        prompt: "次のコードの出力は？",
+        code: "print([(i, j) for i in [1, 2] for j in [\"a\", \"b\"]])",
+        choices: ["[(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b')]", "[(1, 'a'), (2, 'a'), (1, 'b'), (2, 'b')]", "[(1, 2), ('a', 'b')]", "SyntaxError"],
+        answer: 0,
+        explain: "左から順に通常の for の入れ子と同じ順序で回ります。"
+      },
+      {
+        id: "q-6-2-1", chapter: "6-2", skill: "function", tag: "key",
+        title: "keyで比べる",
+        prompt: "次のコードの出力は？",
+        code: "words = [\"bbb\", \"a\", \"cc\"]\nprint(sorted(words, key=len))",
+        choices: ["['a', 'cc', 'bbb']", "['bbb', 'cc', 'a']", "['a', 'bbb', 'cc']", "TypeError"],
+        answer: 0,
+        explain: "key=len なので文字列そのものではなく長さを基準に並べ替えます。"
+      },
+      {
+        id: "q-6-2-2", chapter: "6-2", skill: "function", tag: "map",
+        title: "mapの返すもの",
+        prompt: "次のコードの出力は？",
+        code: "nums = [1, 2, 3]\nprint(list(map(lambda x: x + 1, nums)))",
+        choices: ["[2, 3, 4]", "[1, 2, 3, 1]", "[<lambda>, <lambda>, <lambda>]", "TypeError"],
+        answer: 0,
+        explain: "map は各要素に関数を適用するイテラブルを返します。list にすると結果を確認できます。"
+      },
+      {
+        id: "q-6-2-3", chapter: "6-2", skill: "function", tag: "filter",
+        title: "filterの条件",
+        prompt: "次のコードの出力は？",
+        code: "nums = [0, 1, 2, 3]\nprint(list(filter(lambda x: x % 2 == 1, nums)))",
+        choices: ["[1, 3]", "[0, 2]", "[True, False, True, False]", "[0, 1, 2, 3]"],
+        answer: 0,
+        explain: "filter は関数が True を返した要素だけを残します。"
+      },
+      {
+        id: "q-6-3-1", chapter: "6-3", skill: "function", tag: "クラス",
+        title: "属性を持つインスタンス",
+        prompt: "次のコードの出力は？",
+        code: "class Counter:\n    def __init__(self, value):\n        self.value = value\n\nc = Counter(3)\nprint(c.value)",
+        choices: ["3", "value", "None", "Counter"],
+        answer: 0,
+        explain: "__init__ で self.value に3を代入しています。"
+      },
+      {
+        id: "q-6-3-2", chapter: "6-3", skill: "function", tag: "メソッド",
+        title: "selfを通して更新",
+        prompt: "次のコードの出力は？",
+        code: "class Counter:\n    def __init__(self):\n        self.value = 0\n    def up(self):\n        self.value += 1\n\nc = Counter()\nc.up()\nc.up()\nprint(c.value)",
+        choices: ["2", "1", "0", "TypeError"],
+        answer: 0,
+        explain: "同じインスタンス c の value が2回増えます。"
+      },
+      {
+        id: "q-6-3-3", chapter: "6-3", skill: "function", tag: "継承",
+        title: "メソッドの上書き",
+        prompt: "次のコードの出力は？",
+        code: "class A:\n    def name(self):\n        return \"A\"\n\nclass B(A):\n    def name(self):\n        return \"B\"\n\nprint(B().name())",
+        choices: ["B", "A", "AB", "NameError"],
+        answer: 0,
+        explain: "B は A を継承していますが、name を上書きしているため B のメソッドが呼ばれます。"
+      },
+      {
+        id: "q-7-1-1", chapter: "7-1", skill: "library", tag: "Series",
+        title: "列を取り出す",
+        prompt: "pandasで1列だけを Series として取り出す書き方は？",
+        code: "import pandas as pd\ndf = pd.DataFrame({\"name\": [\"A\", \"B\"], \"score\": [80, 90]})",
+        choices: ["df[\"score\"]", "df[[\"score\"]]", "df.score()", "df.loc(\"score\")"],
+        answer: 0,
+        explain: "df['score'] は Series を返します。df[['score']] は1列の DataFrame です。"
+      },
+      {
+        id: "q-7-1-2", chapter: "7-1", skill: "library", tag: "loc/iloc",
+        title: "ラベルと位置",
+        prompt: "行ラベル 'r2'、列名 'score' を使って値を取る書き方は？",
+        code: "df = pd.DataFrame({\"score\": [80, 90]}, index=[\"r1\", \"r2\"])",
+        choices: ["df.loc[\"r2\", \"score\"]", "df.iloc[\"r2\", \"score\"]", "df.loc[1, 0]", "df[\"r2\", \"score\"]"],
+        answer: 0,
+        explain: "loc はラベル指定です。iloc は整数位置で指定します。"
+      },
+      {
+        id: "q-7-1-3", chapter: "7-1", skill: "library", tag: "条件抽出",
+        title: "条件で行を選ぶ",
+        prompt: "score が80以上の行だけを取り出す書き方は？",
+        code: "df = pd.DataFrame({\"name\": [\"A\", \"B\"], \"score\": [70, 90]})",
+        choices: ["df[df[\"score\"] >= 80]", "df[\"score\" >= 80]", "df.where(\"score\" >= 80)", "df.loc[df >= 80]"],
+        answer: 0,
+        explain: "df['score'] >= 80 で真理値の Series を作り、それを行の選択に使います。"
+      },
+      {
+        id: "q-7-2-1", chapter: "7-2", skill: "library", tag: "教師あり",
+        title: "分類モデルの流れ",
+        prompt: "scikit-learnの教師あり学習で、学習後に未知データの予測を行う基本の順序は？",
+        code: "model = SomeClassifier()\n# X_train, y_train, X_test がある",
+        choices: ["model.fit(X_train, y_train) の後に model.predict(X_test)", "model.predict(X_train, y_train) の後に model.fit(X_test)", "model.score(X_test) だけで予測", "model.learn(X_train) の後に model.answer(y_train)"],
+        answer: 0,
+        explain: "教師あり学習では特徴量 X と正解 y で fit し、predict で未知データを予測します。"
+      },
+      {
+        id: "q-7-2-2", chapter: "7-2", skill: "library", tag: "教師なし",
+        title: "クラスタリング",
+        prompt: "教師なし学習のクラスタリングで、通常 fit に渡さないものは？",
+        code: "from sklearn.cluster import KMeans\nmodel = KMeans(n_clusters=3)",
+        choices: ["正解ラベル y", "特徴量 X", "サンプルの行列", "観測データ"],
+        answer: 0,
+        explain: "クラスタリングは正解ラベルなしでデータのまとまりを見つけます。"
+      },
+      {
+        id: "q-7-2-3", chapter: "7-2", skill: "library", tag: "次元削減",
+        title: "PCAの役割",
+        prompt: "PCAを使う目的として最も近いものは？",
+        code: "from sklearn.decomposition import PCA\npca = PCA(n_components=2)",
+        choices: ["特徴量を少ない次元に変換する", "文字列を正規表現で検索する", "CSVを1行ずつ読み込む", "if文を高速化する"],
+        answer: 0,
+        explain: "PCAはデータの情報をなるべく保ちながら低次元に変換する手法です。"
+      },
+      {
+        id: "q-a-1-1", chapter: "A-1", skill: "debug", tag: "モード",
+        title: "編集モード",
+        prompt: "Jupyter Notebookでセル内のコードを直接入力・編集している状態は？",
+        code: "print(\"hello\")",
+        choices: ["編集モード", "コマンドモード", "保存モード", "出力モード"],
+        answer: 0,
+        explain: "セルの中身を編集する状態が編集モードです。セル全体を操作する状態がコマンドモードです。"
+      },
+      {
+        id: "q-a-1-2", chapter: "A-1", skill: "debug", tag: "実行",
+        title: "セルの実行順",
+        prompt: "実行順がずれて変数の値がわからなくなったとき、理解確認として有効なのは？",
+        code: "x = x + 1",
+        choices: ["必要なセルを上から順に実行し直す", "セルの色だけを変える", "コメントを全部消す", "変数名を日本語にする"],
+        answer: 0,
+        explain: "ノートブックでは実行順が結果に影響します。順に実行し直すと状態をそろえられます。"
+      },
+      {
+        id: "q-a-1-3", chapter: "A-1", skill: "code", tag: "出力",
+        title: "最後の式",
+        prompt: "Jupyterで次のセルを実行したとき、表示される値は？",
+        code: "a = 2\na + 3",
+        choices: ["5", "2", "a + 3", "何も表示されない"],
+        answer: 0,
+        explain: "コードセルの最後の式は、print しなくても値が表示されることがあります。"
+      },
+      {
+        id: "q-a-2-1", chapter: "A-2", skill: "code", tag: "set",
+        title: "重複の除去",
+        prompt: "次のコードの出力として正しい性質は？",
+        code: "s = set([1, 1, 2, 3, 3])\nprint(len(s))",
+        choices: ["3", "5", "0", "TypeError"],
+        answer: 0,
+        explain: "セットは重複要素を持ちません。残る要素は1,2,3の3個です。"
+      },
+      {
+        id: "q-a-2-2", chapter: "A-2", skill: "code", tag: "集合演算",
+        title: "共通部分",
+        prompt: "次のコードの出力は？",
+        code: "a = {1, 2, 3}\nb = {2, 3, 4}\nprint(a & b)",
+        choices: ["{2, 3}", "{1, 4}", "{1, 2, 3, 4}", "{1}"],
+        answer: 0,
+        explain: "& は積集合です。両方に含まれる2と3が残ります。"
+      },
+      {
+        id: "q-a-2-3", chapter: "A-2", skill: "debug", tag: "remove/discard",
+        title: "ない要素を消す",
+        prompt: "セットから存在しない要素を消してもエラーにしたくないときは？",
+        code: "s = {1, 2, 3}\n# 4を消したい",
+        choices: ["s.discard(4)", "s.remove(4)", "s.pop(4)", "s.clear(4)"],
+        answer: 0,
+        explain: "discard は要素がなくてもエラーにしません。remove は KeyError になります。"
+      },
+      {
+        id: "q-a-3-1", chapter: "A-3", skill: "function", tag: "再帰",
+        title: "基底ケース",
+        prompt: "再帰関数で基底ケースが重要な理由は？",
+        code: "def f(n):\n    return f(n - 1)",
+        choices: ["再帰を止める条件がないと呼び出しが続きすぎるため", "関数にはreturnを書けないため", "if文が使えなくなるため", "変数がすべてグローバルになるため"],
+        answer: 0,
+        explain: "再帰には停止条件が必要です。ないと再帰呼び出しが続き、RecursionError などになります。"
+      },
+      {
+        id: "q-a-3-2", chapter: "A-3", skill: "function", tag: "階乗",
+        title: "再帰の戻り値",
+        prompt: "次のコードの出力は？",
+        code: "def fact(n):\n    if n == 0:\n        return 1\n    return n * fact(n - 1)\n\nprint(fact(4))",
+        choices: ["24", "10", "4", "1"],
+        answer: 0,
+        explain: "4 * 3 * 2 * 1 * fact(0) となり、fact(0) は1です。"
+      },
+      {
+        id: "q-a-3-3", chapter: "A-3", skill: "logic", tag: "分割",
+        title: "再帰で小さくする",
+        prompt: "再帰設計でよく行う考え方は？",
+        code: "def solve(data):\n    # dataを小さな部分に分けて処理する",
+        choices: ["元の問題より小さい問題に分ける", "同じ大きさの問題だけを無限に作る", "return を必ず使わない", "すべての変数を削除する"],
+        answer: 0,
+        explain: "再帰では小さな同種の問題へ進め、基底ケースに近づけることが大切です。"
+      },
+      {
+        id: "q-a-4-1", chapter: "A-4", skill: "library", tag: "plot",
+        title: "折れ線グラフ",
+        prompt: "matplotlibで x と y の折れ線グラフを描く基本の関数は？",
+        code: "import matplotlib.pyplot as plt\nx = [1, 2, 3]\ny = [2, 4, 6]",
+        choices: ["plt.plot(x, y)", "plt.scatter(x, y)", "plt.bar(x, y)", "plt.table(x, y)"],
+        answer: 0,
+        explain: "折れ線グラフは plot、散布図は scatter、棒グラフは bar が基本です。"
+      },
+      {
+        id: "q-a-4-2", chapter: "A-4", skill: "library", tag: "scatter",
+        title: "散布図",
+        prompt: "点のばらつきを見る散布図に使う関数は？",
+        code: "import matplotlib.pyplot as plt",
+        choices: ["plt.scatter(x, y)", "plt.plot(x, y)", "plt.hist(x, y)", "plt.savefig(x, y)"],
+        answer: 0,
+        explain: "scatter は各データ点を点として表示します。"
+      },
+      {
+        id: "q-a-4-3", chapter: "A-4", skill: "library", tag: "bar",
+        title: "棒グラフ",
+        prompt: "カテゴリごとの値を棒で比べるときに使う関数は？",
+        code: "labels = [\"A\", \"B\"]\nvalues = [3, 5]",
+        choices: ["plt.bar(labels, values)", "plt.line(labels, values)", "plt.dot(labels, values)", "plt.read(labels, values)"],
+        answer: 0,
+        explain: "棒グラフは bar を使います。カテゴリと値の対応を示すのに向いています。"
+      },
+      {
+        id: "q-a-5-1", chapter: "A-5", skill: "library", tag: "csv.reader",
+        title: "CSVの1行",
+        prompt: "csv.reader で読み込んだ各 row の典型的な型は？",
+        code: "import csv\nwith open(\"data.csv\") as f:\n    reader = csv.reader(f)\n    for row in reader:\n        print(row)",
+        choices: ["文字列のリスト", "1つの長い文字列", "辞書だけ", "NumPy配列だけ"],
+        answer: 0,
+        explain: "csv.reader は各行をフィールドごとの文字列リストとして返します。"
+      },
+      {
+        id: "q-a-5-2", chapter: "A-5", skill: "debug", tag: "文字列",
+        title: "数値として足す",
+        prompt: "CSVから読んだ '10' と '20' を数値として足したい。必要な処理は？",
+        code: "a = \"10\"\nb = \"20\"",
+        choices: ["int(a) + int(b)", "a + b", "str(a + b)", "csv.add(a, b)"],
+        answer: 0,
+        explain: "CSVの値はまず文字列として読まれます。数値計算には型変換が必要です。"
+      },
+      {
+        id: "q-a-5-3", chapter: "A-5", skill: "library", tag: "csv.writer",
+        title: "CSVに書く",
+        prompt: "リスト1行をCSVとして書く基本の呼び出しは？",
+        code: "import csv\nwith open(\"out.csv\", \"w\", newline=\"\") as f:\n    writer = csv.writer(f)",
+        choices: ["writer.writerow([\"A\", 10])", "writer.writecell(\"A\", 10)", "csv.writerow(writer, \"A\", 10)", "f.writerow([\"A\", 10])"],
+        answer: 0,
+        explain: "csv.writer の writerow に1行分のリストを渡します。"
+      },
+      {
+        id: "q-a-6-1", chapter: "A-6", skill: "library", tag: "Bokeh",
+        title: "Bokehのfigure",
+        prompt: "Bokehでグラフの土台を作る代表的な関数は？",
+        code: "from bokeh.plotting import figure, show",
+        choices: ["figure()", "plt.figure()", "pd.DataFrame()", "KMeans()"],
+        answer: 0,
+        explain: "Bokehでは figure で描画対象を作り、line や circle などを追加します。"
+      },
+      {
+        id: "q-a-6-2", chapter: "A-6", skill: "library", tag: "line",
+        title: "線を追加する",
+        prompt: "Bokehで p に折れ線を追加する呼び出しとして自然なのは？",
+        code: "p = figure()\nx = [1, 2, 3]\ny = [2, 4, 6]",
+        choices: ["p.line(x, y)", "p.plot(x, y)", "line.p(x, y)", "show.line(x, y)"],
+        answer: 0,
+        explain: "Bokehの figure オブジェクトに対して p.line のようなメソッドを呼びます。"
+      },
+      {
+        id: "q-a-6-3", chapter: "A-6", skill: "library", tag: "出力",
+        title: "HTML出力",
+        prompt: "BokehでグラフをHTMLファイルに出力する設定として使う関数は？",
+        code: "from bokeh.plotting import output_file, show",
+        choices: ["output_file(\"graph.html\")", "plt.savefig(\"graph.html\")", "pd.to_html(\"graph.html\")", "show(\"graph.html\")"],
+        answer: 0,
+        explain: "output_file で出力先HTMLを指定し、show で表示・保存します。"
+      },
+      {
+        id: "q-a-7-1", chapter: "A-7", skill: "debug", tag: "argv",
+        title: "コマンドライン引数",
+        prompt: "python script.py apple banana と実行したとき、sys.argv[0] に入るものは？",
+        code: "import sys\nprint(sys.argv)",
+        choices: ["スクリプト名", "\"apple\"", "\"banana\"", "引数の個数"],
+        answer: 0,
+        explain: "sys.argv[0] はスクリプト名です。以降にコマンドライン引数が入ります。"
+      },
+      {
+        id: "q-a-7-2", chapter: "A-7", skill: "debug", tag: "__main__",
+        title: "直接実行だけで動かす",
+        prompt: "import時ではなく、コマンドラインで直接実行したときだけ main() を呼ぶ書き方は？",
+        code: "def main():\n    print(\"run\")",
+        choices: ["if __name__ == \"__main__\":\n    main()", "if __main__ == \"__name__\":\n    main()", "when import:\n    main()", "def __name__():\n    main()"],
+        answer: 0,
+        explain: "__name__ の値を使う定番の書き方です。モジュール化しやすくなります。"
+      },
+      {
+        id: "q-a-7-3", chapter: "A-7", skill: "debug", tag: "終了コード",
+        title: "引数の個数確認",
+        prompt: "コマンドライン引数が足りないときに早めに知らせる設計として近いものは？",
+        code: "import sys\n# script.py input.txt output.txt を想定",
+        choices: ["len(sys.argv) を確認して不足ならメッセージを出す", "必ず sys.argv[100] を読む", "input() を100回呼ぶ", "すべての例外を無視する"],
+        answer: 0,
+        explain: "想定する引数の個数を確認すると、IndexErrorより親切な失敗にできます。"
+      },
+      {
+        id: "q-a-8-1", chapter: "A-8", skill: "library", tag: "hist",
+        title: "ヒストグラム",
+        prompt: "データの分布を棒のまとまりで見るときに使う関数は？",
+        code: "import matplotlib.pyplot as plt\ndata = [1, 1, 2, 3, 3, 3]",
+        choices: ["plt.hist(data)", "plt.scatter(data)", "plt.bar(data)", "plt.pca(data)"],
+        answer: 0,
+        explain: "hist は数値データの分布を見るヒストグラムを描きます。"
+      },
+      {
+        id: "q-a-8-2", chapter: "A-8", skill: "library", tag: "savefig",
+        title: "画像として保存",
+        prompt: "matplotlibで現在の図を画像ファイルに保存する基本の関数は？",
+        code: "import matplotlib.pyplot as plt\nplt.plot([1, 2], [3, 4])",
+        choices: ["plt.savefig(\"plot.png\")", "plt.write(\"plot.png\")", "plt.output_file(\"plot.png\")", "plt.export.csv(\"plot.png\")"],
+        answer: 0,
+        explain: "savefig で図をファイルへ保存できます。"
+      },
+      {
+        id: "q-a-8-3", chapter: "A-8", skill: "library", tag: "subplots",
+        title: "複数の描画領域",
+        prompt: "matplotlibで Figure と Axes を作って、Axesに描く書き方として自然なのは？",
+        code: "import matplotlib.pyplot as plt",
+        choices: ["fig, ax = plt.subplots()\nax.plot([1, 2], [3, 4])", "ax, fig = plt.plot.subplots()", "fig.plot.subplots(ax)", "plt.ax.figure().plot()"],
+        answer: 0,
+        explain: "plt.subplots は Figure と Axes を返し、ax.plot のように描けます。"
+      },
+      {
+        id: "q-a-9-1", chapter: "A-9", skill: "library", tag: "re.search",
+        title: "数字を探す",
+        prompt: "文字列 s に数字が含まれるか調べる書き方は？",
+        code: "import re\ns = \"abc123\"",
+        choices: ["re.search(r\"\\d+\", s)", "re.find(r\"\\d+\", s)", "s.search(\"\\d+\")", "re.match_all(s, \"\\d+\")"],
+        answer: 0,
+        explain: "re.search は文字列中からパターンを探します。\\d+ は1個以上の数字です。"
+      },
+      {
+        id: "q-a-9-2", chapter: "A-9", skill: "debug", tag: "raw string",
+        title: "rを付ける理由",
+        prompt: "正規表現で r\"\\d+\" のように r を付ける主な理由は？",
+        code: "pattern = r\"\\d+\"",
+        choices: ["バックスラッシュをPython文字列のエスケープとして解釈させにくくするため", "正規表現を必ず高速化するため", "数字だけを文字列に変換するため", "printを省略するため"],
+        answer: 0,
+        explain: "raw文字列にすると、正規表現のバックスラッシュをそのまま書きやすくなります。"
+      },
+      {
+        id: "q-a-9-3", chapter: "A-9", skill: "library", tag: "sub",
+        title: "置換する",
+        prompt: "文字列中の連続する数字を X に置換するコードは？",
+        code: "import re\ns = \"id=123, code=45\"",
+        choices: ["re.sub(r\"\\d+\", \"X\", s)", "re.replace(r\"\\d+\", \"X\", s)", "s.sub(r\"\\d+\", \"X\")", "re.split(r\"\\d+\", \"X\", s)"],
+        answer: 0,
+        explain: "re.sub(pattern, replacement, string) で正規表現にマッチした部分を置換します。"
+      }
+    ];
+
+    const extraQuestions = [
+      {
+        id: "q-1-0-4", chapter: "1-0", skill: "debug", tag: "実行順",
+        title: "見た目の順番と実行順",
+        prompt: "ノートブックで下のセルを先に実行してから上のセルを実行した。最後に下のセルをもう一度実行しない場合、表示はどうなる？",
+        code: "# 上のセル\nx = 10\n\n# 下のセル\nx + 1",
+        choices: ["下のセルを最後に実行した時点の x で決まる", "常に11と表示される", "常にNameErrorになる", "セルの上下は実行結果に影響しない"],
+        answer: 0,
+        explain: "ノートブックの結果は実行順の状態で決まります。見た目の上下だけでは現在の値は決まりません。"
+      },
+      {
+        id: "q-1-0-5", chapter: "1-0", skill: "code", tag: "セル出力",
+        title: "最後の式だけ",
+        prompt: "Colabで次のコードセルを実行したとき、表示される値として自然なのは？",
+        code: "1 + 1\n2 + 2\n3 + 3",
+        choices: ["6", "2 4 6 が全部表示される", "何も表示されない", "SyntaxErrorになる"],
+        answer: 0,
+        explain: "printを使わない場合、コードセルでは最後の式の値だけが表示されることがあります。"
+      },
+      {
+        id: "q-1-1-4", chapter: "1-1", skill: "code", tag: "べき乗",
+        title: "べき乗の結合",
+        prompt: "次の式の値は？",
+        code: "2 ** 3 ** 2",
+        choices: ["512", "64", "36", "SyntaxError"],
+        answer: 0,
+        explain: "** は右側から結合します。3 ** 2 が先に9になり、2 ** 9 で512です。"
+      },
+      {
+        id: "q-1-1-5", chapter: "1-1", skill: "code", tag: "型変換",
+        title: "intへの変換",
+        prompt: "次のコードの出力は？",
+        code: "print(int(3.9), float(2))",
+        choices: ["3 2.0", "4 2", "3.9 2.0", "TypeError"],
+        answer: 0,
+        explain: "int(3.9) は小数部を切り捨てて3になります。float(2) は2.0です。"
+      },
+      {
+        id: "q-1-2-4", chapter: "1-2", skill: "code", tag: "累積代入",
+        title: "値を更新する",
+        prompt: "次のコードの出力は？",
+        code: "x = 2\nx += 3\nx *= 4\nprint(x)",
+        choices: ["20", "14", "11", "24"],
+        answer: 0,
+        explain: "x += 3 で5、x *= 4 で20になります。"
+      },
+      {
+        id: "q-1-2-5", chapter: "1-2", skill: "function", tag: "関数参照",
+        title: "関数を呼ぶ",
+        prompt: "関数 square の結果を得る書き方として正しいものは？",
+        code: "def square(x):\n    return x * x\n\n# 3の2乗を得たい",
+        choices: ["square(3)", "square", "def square(3)", "return square"],
+        answer: 0,
+        explain: "関数を実行するには括弧を付けて引数を渡します。square だけでは関数オブジェクトの参照です。"
+      },
+      {
+        id: "q-1-3-4", chapter: "1-3", skill: "function", tag: "真理値",
+        title: "真理値を返す関数",
+        prompt: "次のコードの出力は？",
+        code: "def is_even(n):\n    return n % 2 == 0\n\nprint(is_even(5))",
+        choices: ["False", "True", "None", "5"],
+        answer: 0,
+        explain: "5 % 2 は1なので、1 == 0 はFalseです。"
+      },
+      {
+        id: "q-1-3-5", chapter: "1-3", skill: "logic", tag: "比較",
+        title: "比較の連鎖",
+        prompt: "次の式の値は？",
+        code: "1 < 3 < 5",
+        choices: ["True", "False", "1", "SyntaxError"],
+        answer: 0,
+        explain: "Pythonでは比較を連鎖できます。1 < 3 かつ 3 < 5 なのでTrueです。"
+      },
+      {
+        id: "q-1-4-4", chapter: "1-4", skill: "debug", tag: "構文エラー",
+        title: "コロンの不足",
+        prompt: "次のコードでまず直すべき文法上の問題は？",
+        code: "if x > 0\n    print(\"plus\")",
+        choices: ["if行の末尾にコロンがない", "printには文字列を渡せない", "xは必ず負でなければならない", "インデントはPythonでは使わない"],
+        answer: 0,
+        explain: "if文の条件行の末尾にはコロンが必要です。"
+      },
+      {
+        id: "q-1-4-5", chapter: "1-4", skill: "debug", tag: "論理エラー",
+        title: "テストで気づく",
+        prompt: "次のテストが失敗する原因は？",
+        code: "def add(a, b):\n    return a - b\n\nassert add(2, 3) == 5",
+        choices: ["関数の中で足し算ではなく引き算をしている", "assertでは関数を呼べない", "2と3は足せない", "関数名が短すぎる"],
+        answer: 0,
+        explain: "文法は正しいですが、仕様と違う処理を書いている論理エラーです。"
+      },
+      {
+        id: "q-2-1-4", chapter: "2-1", skill: "code", tag: "find",
+        title: "見つからない検索",
+        prompt: "次のコードの出力は？",
+        code: "s = \"banana\"\nprint(s.find(\"z\"))",
+        choices: ["-1", "0", "None", "ValueError"],
+        answer: 0,
+        explain: "find は見つからないと -1 を返します。"
+      },
+      {
+        id: "q-2-1-5", chapter: "2-1", skill: "code", tag: "strip",
+        title: "空白を取り除く",
+        prompt: "次のコードの出力は？",
+        code: "s = \"  hi\\n\"\nprint(s.strip())",
+        choices: ["hi", "  hi", "hi\\n", "  hi\\n"],
+        answer: 0,
+        explain: "strip は前後の空白文字や改行を取り除いた新しい文字列を返します。"
+      },
+      {
+        id: "q-2-2-4", chapter: "2-2", skill: "code", tag: "sorted",
+        title: "sortedの性質",
+        prompt: "次のコードの出力は？",
+        code: "xs = [3, 1, 2]\ny = sorted(xs)\nprint(xs, y)",
+        choices: ["[3, 1, 2] [1, 2, 3]", "[1, 2, 3] [1, 2, 3]", "[3, 1, 2] None", "None [1, 2, 3]"],
+        answer: 0,
+        explain: "sorted は新しいリストを返します。元の xs は変更されません。"
+      },
+      {
+        id: "q-2-2-5", chapter: "2-2", skill: "code", tag: "コピー",
+        title: "スライスでコピー",
+        prompt: "次のコードの出力は？",
+        code: "xs = [1, 2]\nys = xs[:]\nys.append(3)\nprint(xs, ys)",
+        choices: ["[1, 2] [1, 2, 3]", "[1, 2, 3] [1, 2, 3]", "[1, 2, 3] [1, 2]", "[1, 2] [3]"],
+        answer: 0,
+        explain: "xs[:] は浅いコピーを作ります。ysへのappendは元のxsには影響しません。"
+      },
+      {
+        id: "q-2-3-4", chapter: "2-3", skill: "logic", tag: "elif",
+        title: "条件の順序",
+        prompt: "次のコードの出力は？",
+        code: "x = 10\nif x > 0:\n    print(\"positive\")\nelif x > 5:\n    print(\"large\")",
+        choices: ["positive", "large", "positive と large", "何も表示されない"],
+        answer: 0,
+        explain: "最初の if が真なので、後続の elif は評価されません。"
+      },
+      {
+        id: "q-2-3-5", chapter: "2-3", skill: "logic", tag: "or",
+        title: "orの短絡評価",
+        prompt: "次のコードについて正しい説明は？",
+        code: "x = 0\nif x == 0 or 10 / x > 1:\n    print(\"ok\")",
+        choices: ["ZeroDivisionErrorにならず ok と表示される", "ZeroDivisionErrorになる", "何も表示されない", "SyntaxErrorになる"],
+        answer: 0,
+        explain: "or は左がTrueなら右を評価しません。10 / x は実行されません。"
+      },
+      {
+        id: "q-3-1-4", chapter: "3-1", skill: "code", tag: "代入",
+        title: "辞書に追加する",
+        prompt: "次のコードの出力は？",
+        code: "d = {\"a\": 1}\nd[\"b\"] = 2\nprint(d[\"a\"] + d[\"b\"])",
+        choices: ["3", "2", "1", "KeyError"],
+        answer: 0,
+        explain: "d['b'] = 2 で新しいキーと値を追加しています。"
+      },
+      {
+        id: "q-3-1-5", chapter: "3-1", skill: "code", tag: "反復",
+        title: "辞書をforで回す",
+        prompt: "辞書をそのままfor文で回すと、基本的に何が取り出される？",
+        code: "d = {\"a\": 1, \"b\": 2}\nfor x in d:\n    print(x)",
+        choices: ["キー", "値", "キーと値のタプル", "辞書全体"],
+        answer: 0,
+        explain: "辞書をそのまま反復するとキーが取り出されます。値も必要なら items() などを使います。"
+      },
+      {
+        id: "q-3-2-4", chapter: "3-2", skill: "logic", tag: "continue",
+        title: "continueで飛ばす",
+        prompt: "次のコードの出力は？",
+        code: "total = 0\nfor n in [1, 2, 3]:\n    if n == 2:\n        continue\n    total += n\nprint(total)",
+        choices: ["4", "6", "3", "1"],
+        answer: 0,
+        explain: "nが2のときはcontinueで加算を飛ばします。1 + 3 で4です。"
+      },
+      {
+        id: "q-3-2-5", chapter: "3-2", skill: "code", tag: "while",
+        title: "whileの更新",
+        prompt: "次のコードの出力は？",
+        code: "n = 3\ncount = 0\nwhile n > 0:\n    count += 1\n    n -= 1\nprint(count)",
+        choices: ["3", "2", "4", "0"],
+        answer: 0,
+        explain: "n が3,2,1の3回だけループします。"
+      },
+      {
+        id: "q-3-3-4", chapter: "3-3", skill: "function", tag: "可変長引数",
+        title: "引数をまとめる",
+        prompt: "次のコードの出力は？",
+        code: "def total(*nums):\n    return sum(nums)\n\nprint(total(1, 2, 3))",
+        choices: ["6", "[1, 2, 3]", "TypeError", "None"],
+        answer: 0,
+        explain: "*nums は渡された複数の位置引数をタプルとして受け取ります。sumで合計しています。"
+      },
+      {
+        id: "q-3-3-5", chapter: "3-3", skill: "function", tag: "関数オブジェクト",
+        title: "関数を変数に入れる",
+        prompt: "次のコードの出力は？",
+        code: "def twice(x):\n    return x * 2\n\ng = twice\nprint(g(4))",
+        choices: ["8", "4", "twice", "NameError"],
+        answer: 0,
+        explain: "関数も値として変数に代入できます。g(4) は twice(4) と同じように呼び出せます。"
+      },
+      {
+        id: "q-4-1-4", chapter: "4-1", skill: "code", tag: "read",
+        title: "readの返り値",
+        prompt: "ファイル全体を一度に読み込む read() の返り値として基本的なものは？",
+        code: "with open(\"memo.txt\") as f:\n    text = f.read()",
+        choices: ["文字列", "リスト", "辞書", "ファイル名"],
+        answer: 0,
+        explain: "read() はファイル全体の内容を1つの文字列として返します。"
+      },
+      {
+        id: "q-4-1-5", chapter: "4-1", skill: "debug", tag: "文字コード",
+        title: "文字コード指定",
+        prompt: "UTF-8のテキストを明示して読む書き方として適切なのは？",
+        code: "# memo.txt を読む",
+        choices: ["open(\"memo.txt\", encoding=\"utf-8\")", "open(\"memo.txt\", code=\"utf-8\")", "open(\"memo.txt\", type=\"utf-8\")", "encoding.open(\"memo.txt\")"],
+        answer: 0,
+        explain: "open の encoding 引数で文字コードを指定できます。"
+      },
+      {
+        id: "q-4-2-4", chapter: "4-2", skill: "debug", tag: "iterator",
+        title: "リストとnext",
+        prompt: "次のコードを実行するとどうなる？",
+        code: "xs = [1, 2]\nprint(next(xs))",
+        choices: ["TypeErrorになる", "1が表示される", "[1, 2]が表示される", "StopIterationになる"],
+        answer: 0,
+        explain: "リストはイテラブルですが、それ自体はイテレータではありません。next(iter(xs)) のようにします。"
+      },
+      {
+        id: "q-4-2-5", chapter: "4-2", skill: "code", tag: "enumerate",
+        title: "enumerateの消費",
+        prompt: "次のコードの出力は？",
+        code: "e = enumerate([\"a\", \"b\"])\nprint(list(e))\nprint(list(e))",
+        choices: ["[(0, 'a'), (1, 'b')]\n[]", "[(0, 'a'), (1, 'b')]\n[(0, 'a'), (1, 'b')]", "[]\n[(0, 'a'), (1, 'b')]", "TypeError"],
+        answer: 0,
+        explain: "enumerate が返すイテレータも一度消費すると残りがなくなります。"
+      },
+      {
+        id: "q-4-3-4", chapter: "4-3", skill: "library", tag: "cwd",
+        title: "作業ディレクトリ",
+        prompt: "現在の作業ディレクトリを調べる関数は？",
+        code: "import os",
+        choices: ["os.getcwd()", "os.listdir(\".\")", "os.path.join()", "os.chdir()"],
+        answer: 0,
+        explain: "os.getcwd() は current working directory、つまり現在の作業ディレクトリを返します。"
+      },
+      {
+        id: "q-4-3-5", chapter: "4-3", skill: "logic", tag: "親ディレクトリ",
+        title: "親を指す記号",
+        prompt: "パスで1つ上のディレクトリを表す記号は？",
+        code: "../data/sample.txt",
+        choices: ["..", ".", "/", "~"],
+        answer: 0,
+        explain: ".. は親ディレクトリ、. は現在のディレクトリを表します。"
+      },
+      {
+        id: "q-5-1-4", chapter: "5-1", skill: "library", tag: "as",
+        title: "別名で呼ぶ",
+        prompt: "次のコードのあと、正しい平方根の呼び出しは？",
+        code: "import math as m",
+        choices: ["m.sqrt(25)", "math.sqrt(25)", "sqrt(25)", "as.sqrt(25)"],
+        answer: 0,
+        explain: "math を m という名前で読み込んでいるので、m.sqrt のように呼びます。"
+      },
+      {
+        id: "q-5-1-5", chapter: "5-1", skill: "library", tag: "from",
+        title: "複数を読み込む",
+        prompt: "sqrt と pi だけを math から読み込む書き方は？",
+        code: "# mathからsqrtとpiを使いたい",
+        choices: ["from math import sqrt, pi", "import math sqrt, pi", "from sqrt, pi import math", "math import sqrt and pi"],
+        answer: 0,
+        explain: "from モジュール import 名前1, 名前2 の形で複数の名前を読み込めます。"
+      },
+      {
+        id: "q-5-2-4", chapter: "5-2", skill: "library", tag: "配置",
+        title: "自作モジュールの場所",
+        prompt: "自作モジュール mytool.py を import mytool で使いやすくする基本的な置き場所は？",
+        code: "import mytool",
+        choices: ["実行するノートブックやスクリプトから見つかる場所", "必ずデスクトップの直下", "必ずPython本体のフォルダ", "画像フォルダの中"],
+        answer: 0,
+        explain: "Pythonが探索できる場所にモジュールファイルを置く必要があります。"
+      },
+      {
+        id: "q-5-2-5", chapter: "5-2", skill: "debug", tag: "拡張子",
+        title: "モジュールファイル",
+        prompt: "Pythonのモジュールファイルとして基本的な拡張子は？",
+        code: "mycalc.py",
+        choices: [".py", ".ipynbだけ", ".txt", ".csv"],
+        answer: 0,
+        explain: "通常のPythonモジュールは .py ファイルとして作ります。"
+      },
+      {
+        id: "q-5-3-4", chapter: "5-3", skill: "library", tag: "配列演算",
+        title: "配列同士の足し算",
+        prompt: "次のコードの出力に最も近いものは？",
+        code: "import numpy as np\na = np.array([1, 2])\nb = np.array([10, 20])\nprint(a + b)",
+        choices: ["[11 22]", "[1 2 10 20]", "[10 40]", "TypeError"],
+        answer: 0,
+        explain: "同じ形のNumPy配列同士の + は要素ごとの足し算です。"
+      },
+      {
+        id: "q-5-3-5", chapter: "5-3", skill: "library", tag: "dtype",
+        title: "要素型",
+        prompt: "NumPy配列の要素型を調べる属性は？",
+        code: "import numpy as np\na = np.array([1, 2, 3])",
+        choices: ["a.dtype", "a.type()", "a.kind()", "np.type(a)"],
+        answer: 0,
+        explain: "dtype 属性で配列の要素型を確認できます。"
+      },
+      {
+        id: "q-6-1-4", chapter: "6-1", skill: "code", tag: "平坦化",
+        title: "二重ループで平坦化",
+        prompt: "次のコードの出力は？",
+        code: "rows = [[1, 2], [3]]\nprint([x for row in rows for x in row])",
+        choices: ["[1, 2, 3]", "[[1, 2], [3]]", "[1, 3]", "SyntaxError"],
+        answer: 0,
+        explain: "通常の二重forと同じ順序で、各rowの中のxを順に取り出します。"
+      },
+      {
+        id: "q-6-1-5", chapter: "6-1", skill: "code", tag: "辞書内包表記",
+        title: "辞書を作る",
+        prompt: "次のコードの出力は？",
+        code: "print({x: x * x for x in range(3)})",
+        choices: ["{0: 0, 1: 1, 2: 4}", "[0, 1, 4]", "{1: 1, 2: 4, 3: 9}", "SyntaxError"],
+        answer: 0,
+        explain: "辞書内包表記では key: value の形で要素を作ります。"
+      },
+      {
+        id: "q-6-2-4", chapter: "6-2", skill: "function", tag: "max key",
+        title: "一番長い文字列",
+        prompt: "次のコードの出力は？",
+        code: "words = [\"bb\", \"a\", \"ccc\"]\nprint(max(words, key=len))",
+        choices: ["ccc", "bb", "a", "3"],
+        answer: 0,
+        explain: "key=len なので、文字列の長さが最大の要素が返ります。"
+      },
+      {
+        id: "q-6-2-5", chapter: "6-2", skill: "function", tag: "lambda",
+        title: "ラムダ式を呼ぶ",
+        prompt: "次のコードの出力は？",
+        code: "f = lambda x: x * 3\nprint(f(4))",
+        choices: ["12", "7", "lambda", "None"],
+        answer: 0,
+        explain: "lambdaで作った関数を f に代入し、f(4) で呼び出しています。"
+      },
+      {
+        id: "q-6-3-4", chapter: "6-3", skill: "function", tag: "__str__",
+        title: "文字列化",
+        prompt: "次のコードの出力は？",
+        code: "class Point:\n    def __str__(self):\n        return \"P\"\n\nprint(str(Point()))",
+        choices: ["P", "Point", "__str__", "None"],
+        answer: 0,
+        explain: "__str__ は str(obj) や print(obj) で使われる文字列表現を返します。"
+      },
+      {
+        id: "q-6-3-5", chapter: "6-3", skill: "function", tag: "属性",
+        title: "インスタンスごとの値",
+        prompt: "次のコードの出力は？",
+        code: "class Box:\n    def __init__(self, value):\n        self.value = value\n\nb1 = Box(1)\nb2 = Box(2)\nprint(b1.value, b2.value)",
+        choices: ["1 2", "2 2", "1 1", "Box Box"],
+        answer: 0,
+        explain: "self.value は各インスタンスが持つ属性です。b1とb2で別々の値を持てます。"
+      },
+      {
+        id: "q-7-1-4", chapter: "7-1", skill: "library", tag: "shape",
+        title: "DataFrameの形",
+        prompt: "次のコードの出力は？",
+        code: "import pandas as pd\ndf = pd.DataFrame({\"a\": [1, 2], \"b\": [3, 4]})\nprint(df.shape)",
+        choices: ["(2, 2)", "(4,)", "(2,)", "(1, 4)"],
+        answer: 0,
+        explain: "2行2列のDataFrameなので shape は (2, 2) です。"
+      },
+      {
+        id: "q-7-1-5", chapter: "7-1", skill: "library", tag: "sort_values",
+        title: "列で並べ替える",
+        prompt: "score列の小さい順に行を並べ替える書き方は？",
+        code: "df = pd.DataFrame({\"name\": [\"A\", \"B\"], \"score\": [90, 70]})",
+        choices: ["df.sort_values(\"score\")", "df.sort(\"score\")", "df.order_by(score)", "sort_values(df, \"score\")"],
+        answer: 0,
+        explain: "DataFrameの sort_values メソッドで指定列を基準に並べ替えられます。"
+      },
+      {
+        id: "q-7-2-4", chapter: "7-2", skill: "library", tag: "分割",
+        title: "訓練用と評価用",
+        prompt: "train_test_split を使う主な目的は？",
+        code: "from sklearn.model_selection import train_test_split",
+        choices: ["データを学習用と評価用に分ける", "CSVを読み込む", "グラフを保存する", "文字列を検索する"],
+        answer: 0,
+        explain: "学習に使っていないデータで性能を見るため、訓練用と評価用に分けます。"
+      },
+      {
+        id: "q-7-2-5", chapter: "7-2", skill: "library", tag: "score",
+        title: "モデルの評価",
+        prompt: "学習済みモデルの評価値を得る基本的な呼び出しは？",
+        code: "model.fit(X_train, y_train)\n# X_test, y_testで評価したい",
+        choices: ["model.score(X_test, y_test)", "model.test_score()", "score(model, X_test)", "model.fit_score(y_test)"],
+        answer: 0,
+        explain: "多くのscikit-learnモデルは score(X, y) で評価値を返します。"
+      },
+      {
+        id: "q-a-1-4", chapter: "A-1", skill: "debug", tag: "実行",
+        title: "Shift-Enter",
+        prompt: "Jupyter Notebookで現在のセルを実行して次へ進む操作としてよく使うものは？",
+        code: "print(\"run\")",
+        choices: ["Shift-Enter", "Ctrl-Sだけ", "Escだけ", "Tabだけ"],
+        answer: 0,
+        explain: "Shift-Enter はセルを実行して次のセルへ移る基本操作です。"
+      },
+      {
+        id: "q-a-1-5", chapter: "A-1", skill: "debug", tag: "コマンドモード",
+        title: "セル全体を操作する",
+        prompt: "セルの追加や削除など、セル全体を操作しやすい状態は？",
+        code: "# セル全体を選んで操作する",
+        choices: ["コマンドモード", "編集モード", "出力モード", "保存モード"],
+        answer: 0,
+        explain: "コマンドモードではセル全体に対する操作を行いやすくなります。"
+      },
+      {
+        id: "q-a-2-4", chapter: "A-2", skill: "code", tag: "和集合",
+        title: "和集合",
+        prompt: "次のコードの出力は？",
+        code: "a = {1, 2}\nb = {2, 3}\nprint(a | b)",
+        choices: ["{1, 2, 3}", "{2}", "{1}", "{3}"],
+        answer: 0,
+        explain: "| は和集合です。どちらかに含まれる要素を集めます。"
+      },
+      {
+        id: "q-a-2-5", chapter: "A-2", skill: "code", tag: "差集合",
+        title: "差集合",
+        prompt: "次のコードの出力は？",
+        code: "a = {1, 2, 3}\nb = {2, 4}\nprint(a - b)",
+        choices: ["{1, 3}", "{2}", "{1, 2, 3, 4}", "{4}"],
+        answer: 0,
+        explain: "a - b は a にあり b にない要素を返します。"
+      },
+      {
+        id: "q-a-3-4", chapter: "A-3", skill: "function", tag: "再帰",
+        title: "リストの合計",
+        prompt: "次のコードの出力は？",
+        code: "def total(xs):\n    if xs == []:\n        return 0\n    return xs[0] + total(xs[1:])\n\nprint(total([1, 2, 3]))",
+        choices: ["6", "3", "0", "RecursionError"],
+        answer: 0,
+        explain: "先頭要素と残りの合計を足し、空リストで0を返して止まります。"
+      },
+      {
+        id: "q-a-3-5", chapter: "A-3", skill: "logic", tag: "停止条件",
+        title: "停止に近づく",
+        prompt: "再帰関数で特に大切な設計は？",
+        code: "def f(n):\n    if n == 0:\n        return 0\n    return f(n - 1)",
+        choices: ["呼び出しのたびに基底ケースへ近づくこと", "必ず引数を増やし続けること", "returnを削除すること", "グローバル変数だけを使うこと"],
+        answer: 0,
+        explain: "再帰は停止条件へ近づかなければ終わりません。"
+      },
+      {
+        id: "q-a-4-4", chapter: "A-4", skill: "library", tag: "show",
+        title: "グラフを表示する",
+        prompt: "matplotlibで作成したグラフを表示する基本の関数は？",
+        code: "import matplotlib.pyplot as plt\nplt.plot([1, 2], [3, 4])",
+        choices: ["plt.show()", "plt.open()", "plt.read()", "plt.display_file()"],
+        answer: 0,
+        explain: "plt.show() は作成した図を表示します。"
+      },
+      {
+        id: "q-a-4-5", chapter: "A-4", skill: "library", tag: "label",
+        title: "軸ラベル",
+        prompt: "x軸のラベルを設定する基本の関数は？",
+        code: "import matplotlib.pyplot as plt",
+        choices: ["plt.xlabel(\"time\")", "plt.x(\"time\")", "plt.labelx(\"time\")", "plt.axis_name(\"time\")"],
+        answer: 0,
+        explain: "xlabel でx軸、ylabel でy軸のラベルを設定します。"
+      },
+      {
+        id: "q-a-5-4", chapter: "A-5", skill: "library", tag: "DictReader",
+        title: "列名で読む",
+        prompt: "CSVのヘッダ名をキーとして各行を辞書のように読むクラスは？",
+        code: "import csv",
+        choices: ["csv.DictReader", "csv.reader_dict", "csv.HeaderList", "csv.NamedCSV"],
+        answer: 0,
+        explain: "DictReader はヘッダ行の名前を使って各行を辞書として扱えます。"
+      },
+      {
+        id: "q-a-5-5", chapter: "A-5", skill: "debug", tag: "newline",
+        title: "CSV書き込みのnewline",
+        prompt: "CSVを書き込むとき open(..., newline='') を使う理由として近いものは？",
+        code: "with open(\"out.csv\", \"w\", newline=\"\") as f:\n    writer = csv.writer(f)",
+        choices: ["余分な空行などを避けるため", "数値を自動で全部足すため", "ファイル名を暗号化するため", "必ずUTF-16にするため"],
+        answer: 0,
+        explain: "CSV書き込みでは改行処理の重なりを避けるため newline='' がよく使われます。"
+      },
+      {
+        id: "q-a-6-4", chapter: "A-6", skill: "library", tag: "show",
+        title: "Bokehで表示",
+        prompt: "Bokehで作った figure p を表示する基本の呼び出しは？",
+        code: "from bokeh.plotting import figure, show\np = figure()",
+        choices: ["show(p)", "p.show()", "figure.show(p)", "plt.show(p)"],
+        answer: 0,
+        explain: "Bokehでは show(p) のように表示対象を渡します。"
+      },
+      {
+        id: "q-a-6-5", chapter: "A-6", skill: "library", tag: "circle",
+        title: "点を描く",
+        prompt: "Bokehの figure p に点を描く呼び出しとして自然なのは？",
+        code: "p = figure()\nx = [1, 2]\ny = [3, 4]",
+        choices: ["p.circle(x, y)", "p.scatter_file(x, y)", "show.circle(x, y)", "figure.dot(p, x, y)"],
+        answer: 0,
+        explain: "Bokehでは figure オブジェクトのメソッドで線や点を追加します。"
+      },
+      {
+        id: "q-a-7-4", chapter: "A-7", skill: "debug", tag: "python -m",
+        title: "モジュールとして実行",
+        prompt: "Pythonモジュールをコマンドラインからモジュールとして実行する形は？",
+        code: "# package.module を実行したい",
+        choices: ["python -m package.module", "python import package.module", "run module package", "python --module=import"],
+        answer: 0,
+        explain: "python -m はモジュールをスクリプトとして実行するための形式です。"
+      },
+      {
+        id: "q-a-7-5", chapter: "A-7", skill: "debug", tag: "shebang",
+        title: "shebangの役割",
+        prompt: "スクリプト先頭の shebang に近い役割は？",
+        code: "#!/usr/bin/env python3",
+        choices: ["どの実行プログラムで動かすかを示す", "必ずコメントを削除する", "CSVに変換する", "関数を自動で高速化する"],
+        answer: 0,
+        explain: "Unix系環境では shebang により、そのファイルを実行するインタプリタを示せます。"
+      },
+      {
+        id: "q-a-8-4", chapter: "A-8", skill: "library", tag: "imshow",
+        title: "ヒートマップ",
+        prompt: "2次元の数値配列を色で表示する関数としてよく使うものは？",
+        code: "import matplotlib.pyplot as plt\ndata = [[1, 2], [3, 4]]",
+        choices: ["plt.imshow(data)", "plt.hist(data)", "plt.readline(data)", "plt.csv(data)"],
+        answer: 0,
+        explain: "imshow は2次元配列を画像のように色で表示できます。"
+      },
+      {
+        id: "q-a-8-5", chapter: "A-8", skill: "library", tag: "Axes",
+        title: "Axesにタイトル",
+        prompt: "Axesオブジェクト ax にタイトルを付ける書き方は？",
+        code: "fig, ax = plt.subplots()",
+        choices: ["ax.set_title(\"Title\")", "ax.title(\"Title\")", "plt.ax.title = \"Title\"", "fig.title(ax, \"Title\")"],
+        answer: 0,
+        explain: "Axesには set_title のような set 系メソッドで設定できます。"
+      },
+      {
+        id: "q-a-9-4", chapter: "A-9", skill: "library", tag: "findall",
+        title: "全部見つける",
+        prompt: "次のコードの出力は？",
+        code: "import re\nprint(re.findall(r\"\\d+\", \"a12b3\"))",
+        choices: ["['12', '3']", "['1', '2', '3']", "12", "None"],
+        answer: 0,
+        explain: "findall はマッチした部分文字列をリストで返します。\\d+ は連続する数字です。"
+      },
+      {
+        id: "q-a-9-5", chapter: "A-9", skill: "library", tag: "アンカー",
+        title: "行頭にマッチ",
+        prompt: "文字列の先頭が Python で始まるか調べる正規表現として近いものは？",
+        code: "import re\ns = \"Python programming\"",
+        choices: ["re.search(r\"^Python\", s)", "re.search(r\"Python$\", s)", "re.search(r\".Python\", s)", "re.search(r\"[Python]$\", s)"],
+        answer: 0,
+        explain: "^ は文字列の先頭を表します。$ は末尾です。"
+      }
+    ];
+
+    const questionBank = questions.concat(extraQuestions);
+
+    const chapterMap = new Map(chapters.map(chapter => [chapter.id, chapter]));
+    const progressKey = "ipp-quiz-progress-v1";
+    const setSize = 5;
+    const letters = ["A", "B", "C", "D"];
+    const modeLabels = {
+      chapter: "章別",
+      all: "全章",
+      code: "コード",
+      weak: "苦手"
+    };
+
+    const state = {
+      mode: "chapter",
+      filter: "all",
+      chapter: "1-0",
+      deck: [],
+      index: 0,
+      answered: false,
+      selected: null,
+      session: {},
+      lastMisses: [],
+      optionOrders: {}
+    };
+
+    const els = {
+      chapterList: document.querySelector("#chapterList"),
+      quizShell: document.querySelector("#quizShell"),
+      resultShell: document.querySelector("#resultShell"),
+      chapterTag: document.querySelector("#chapterTag"),
+      skillTag: document.querySelector("#skillTag"),
+      questionTitle: document.querySelector("#questionTitle"),
+      sourceLink: document.querySelector("#sourceLink"),
+      prompt: document.querySelector("#prompt"),
+      codeBlock: document.querySelector("#codeBlock"),
+      code: document.querySelector("#codeBlock code"),
+      options: document.querySelector("#options"),
+      feedback: document.querySelector("#feedback"),
+      prevBtn: document.querySelector("#prevBtn"),
+      retryBtn: document.querySelector("#retryBtn"),
+      nextBtn: document.querySelector("#nextBtn"),
+      meterText: document.querySelector("#meterText"),
+      meterBar: document.querySelector("#meterBar"),
+      modeText: document.querySelector("#modeText"),
+      correctCount: document.querySelector("#correctCount"),
+      wrongCount: document.querySelector("#wrongCount"),
+      masteryCount: document.querySelector("#masteryCount"),
+      resultTitle: document.querySelector("#resultTitle"),
+      resultScore: document.querySelector("#resultScore"),
+      resultRate: document.querySelector("#resultRate"),
+      resultMiss: document.querySelector("#resultMiss"),
+      reviewBtn: document.querySelector("#reviewBtn"),
+      againBtn: document.querySelector("#againBtn"),
+      nextSetBtn: document.querySelector("#nextSetBtn"),
+      fxLayer: document.querySelector("#fxLayer")
+    };
+
+    let progress = loadProgress();
+
+    function loadProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(progressKey)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem(progressKey, JSON.stringify(progress));
+    }
+
+    function questionsForFilter() {
+      return questionBank.filter(question => {
+        const chapter = chapterMap.get(question.chapter);
+        return state.filter === "all" || chapter.group === state.filter;
+      });
+    }
+
+    function chaptersForFilter() {
+      return chapters.filter(chapter => state.filter === "all" || chapter.group === state.filter);
+    }
+
+    function shuffle(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function buildDeck() {
+      const pool = questionsForFilter();
+      if (state.mode === "chapter") {
+        return pool.filter(question => question.chapter === state.chapter).slice(0, setSize);
+      }
+      if (state.mode === "code") {
+        return shuffle(pool.filter(question => ["code", "function", "debug"].includes(question.skill))).slice(0, setSize);
+      }
+      if (state.mode === "weak") {
+        const weak = pool.filter(question => (progress[question.id]?.wrong || 0) > 0 && !progress[question.id]?.mastered);
+        return shuffle(weak.length ? weak : pool).slice(0, setSize);
+      }
+      return shuffle(pool).slice(0, setSize);
+    }
+
+    function startDeck(deck = buildDeck()) {
+      state.deck = deck.length ? deck : questionsForFilter().slice(0, 1);
+      state.index = 0;
+      state.answered = false;
+      state.selected = null;
+      state.session = {};
+      state.lastMisses = [];
+      state.optionOrders = {};
+      els.resultShell.classList.add("hidden");
+      els.quizShell.classList.remove("hidden");
+      render();
+    }
+
+    function currentQuestion() {
+      return state.deck[state.index];
+    }
+
+    function optionOrderFor(question) {
+      if (!state.optionOrders[question.id]) {
+        state.optionOrders[question.id] = shuffle(question.choices.map((_, index) => index));
+      }
+      return state.optionOrders[question.id];
+    }
+
+    function renderChapters() {
+      const visible = chaptersForFilter();
+      els.chapterList.innerHTML = "";
+      visible.forEach(chapter => {
+        const qs = questionBank.filter(question => question.chapter === chapter.id);
+        const done = qs.filter(question => progress[question.id]?.correct).length;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `chapter-button${chapter.id === state.chapter ? " active" : ""}`;
+        btn.dataset.chapter = chapter.id;
+        btn.innerHTML = `
+          <span>
+            <span class="chapter-title">${escapeHtml(chapter.title)}</span>
+            <span class="chapter-meta">${chapter.group === "main" ? "本編" : "発展"} / ${qs.length}問</span>
+          </span>
+          <span class="pill">${done}/${qs.length}</span>
+        `;
+        btn.addEventListener("click", () => {
+          state.chapter = chapter.id;
+          state.mode = "chapter";
+          setActiveButtons();
+          renderChapters();
+          startDeck();
+        });
+        els.chapterList.appendChild(btn);
+      });
+    }
+
+    function render() {
+      const question = currentQuestion();
+      const chapter = chapterMap.get(question.chapter);
+      els.chapterTag.textContent = chapter.id;
+      els.skillTag.textContent = question.tag;
+      els.skillTag.className = `tag ${question.skill === "debug" ? "debug" : question.skill === "library" ? "library" : question.skill === "logic" ? "logic" : ""}`;
+      els.questionTitle.textContent = question.title;
+      els.sourceLink.href = chapter.url;
+      els.prompt.textContent = question.prompt;
+      if (question.code) {
+        els.codeBlock.classList.remove("hidden");
+        els.code.textContent = question.code;
+      } else {
+        els.codeBlock.classList.add("hidden");
+        els.code.textContent = "";
+      }
+
+      els.options.innerHTML = "";
+      optionOrderFor(question).forEach((choiceIndex, displayIndex) => {
+        const choice = question.choices[choiceIndex];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option";
+        btn.dataset.choiceIndex = String(choiceIndex);
+        btn.innerHTML = `<span class="letter">${letters[displayIndex]}</span><span>${escapeHtml(choice).replace(/\n/g, "<br>")}</span>`;
+        btn.addEventListener("click", () => answer(displayIndex));
+        els.options.appendChild(btn);
+      });
+
+      els.feedback.className = "feedback";
+      els.feedback.innerHTML = "";
+      state.answered = false;
+      state.selected = null;
+      updateMeter();
+      updateStats();
+      els.prevBtn.disabled = state.index === 0;
+      els.retryBtn.disabled = false;
+      els.nextBtn.textContent = state.index === state.deck.length - 1 ? "結果" : "次へ";
+      renderChapters();
+    }
+
+    function snapToQuiz() {
+      requestAnimationFrame(() => {
+        els.quizShell.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    }
+
+    function answer(index) {
+      if (state.answered) return;
+      const question = currentQuestion();
+      const optionOrder = optionOrderFor(question);
+      const choiceIndex = optionOrder[index];
+      const correctDisplayIndex = optionOrder.indexOf(question.answer);
+      const isCorrect = choiceIndex === question.answer;
+      state.answered = true;
+      state.selected = index;
+      state.session[question.id] = isCorrect;
+
+      if (!progress[question.id]) progress[question.id] = { attempts: 0, correct: 0, wrong: 0, mastered: false };
+      progress[question.id].attempts += 1;
+      if (isCorrect) {
+        progress[question.id].correct += 1;
+        if ((progress[question.id].wrong || 0) === 0 || progress[question.id].correct >= 2) {
+          progress[question.id].mastered = true;
+        }
+      } else {
+        progress[question.id].wrong += 1;
+        progress[question.id].mastered = false;
+        if (!state.lastMisses.includes(question.id)) state.lastMisses.push(question.id);
+      }
+      saveProgress();
+
+      [...els.options.children].forEach((btn, optionIndex) => {
+        btn.classList.add("disabled");
+        if (optionIndex === correctDisplayIndex) btn.classList.add("correct");
+        if (optionIndex === index && !isCorrect) btn.classList.add("wrong");
+      });
+
+      els.feedback.className = `feedback show ${isCorrect ? "good" : "bad"}`;
+      els.feedback.innerHTML = `
+        <strong>${isCorrect ? "正解" : "もう一歩"}</strong>
+        <p>${escapeHtml(question.explain)}</p>
+      `;
+      animateAnswer(isCorrect);
+      updateStats();
+      renderChapters();
+    }
+
+    function retryQuestion() {
+      state.answered = false;
+      state.selected = null;
+      els.feedback.className = "feedback";
+      els.feedback.innerHTML = "";
+      [...els.options.children].forEach(btn => {
+        btn.className = "option";
+      });
+    }
+
+    function nextQuestion() {
+      if (state.index >= state.deck.length - 1) {
+        showResult();
+        return;
+      }
+      state.index += 1;
+      render();
+      snapToQuiz();
+    }
+
+    function prevQuestion() {
+      if (state.index === 0) return;
+      state.index -= 1;
+      render();
+      snapToQuiz();
+    }
+
+    function showResult() {
+      const values = Object.values(state.session);
+      const correct = values.filter(Boolean).length;
+      const answered = values.length || state.deck.length;
+      const rate = answered ? Math.round((correct / answered) * 100) : 0;
+      els.quizShell.classList.add("hidden");
+      els.resultShell.classList.remove("hidden");
+      els.resultTitle.textContent = rate >= 80 ? "かなり読めています" : rate >= 50 ? "伸びしろが見えました" : "ここから固めましょう";
+      els.resultScore.textContent = `${correct}/${state.deck.length}`;
+      els.resultRate.textContent = `${rate}%`;
+      els.resultMiss.textContent = `${state.lastMisses.length}`;
+      els.reviewBtn.disabled = state.lastMisses.length === 0;
+      const nextChapter = getNextChapter();
+      if (state.mode === "chapter" && nextChapter) {
+        els.nextSetBtn.textContent = `次のセットへ進む`;
+        els.nextSetBtn.disabled = false;
+      } else {
+        els.nextSetBtn.textContent = "次のセットへ進む";
+        els.nextSetBtn.disabled = false;
+      }
+      updateMeter();
+      updateStats();
+    }
+
+    function getNextChapter() {
+      const visible = chaptersForFilter();
+      const currentIndex = visible.findIndex(chapter => chapter.id === state.chapter);
+      if (currentIndex === -1 || visible.length === 0) return null;
+      return visible[(currentIndex + 1) % visible.length];
+    }
+
+    function startNextSet() {
+      if (state.mode === "chapter") {
+        const nextChapter = getNextChapter();
+        if (nextChapter) state.chapter = nextChapter.id;
+      }
+      renderChapters();
+      startDeck();
+      snapToQuiz();
+    }
+
+    function updateMeter() {
+      const total = state.deck.length || 1;
+      const current = Math.min(state.index + 1, total);
+      els.meterText.textContent = `${current} / ${total}`;
+      els.meterBar.style.width = `${Math.round((current / total) * 100)}%`;
+      els.modeText.textContent = modeLabels[state.mode];
+    }
+
+    function updateStats() {
+      const filtered = questionsForFilter();
+      const correct = filtered.filter(question => progress[question.id]?.correct).length;
+      const wrong = filtered.reduce((sum, question) => sum + (progress[question.id]?.wrong || 0), 0);
+      const mastery = filtered.length ? Math.round((correct / filtered.length) * 100) : 0;
+      els.correctCount.textContent = correct;
+      els.wrongCount.textContent = wrong;
+      els.masteryCount.textContent = `${mastery}%`;
+    }
+
+    function animateAnswer(isCorrect) {
+      els.quizShell.classList.remove("correct-pulse", "wrong-shake");
+      void els.quizShell.offsetWidth;
+      els.quizShell.classList.add(isCorrect ? "correct-pulse" : "wrong-shake");
+
+      const rect = els.quizShell.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 4;
+      const colors = isCorrect
+        ? ["#178a53", "#2367d1", "#d79212", "#008c8c", "#6d5bd0"]
+        : ["#e05b52", "#d79212", "#697386"];
+      const count = isCorrect ? 34 : 18;
+      for (let i = 0; i < count; i++) {
+        const node = document.createElement("span");
+        node.className = isCorrect ? "spark" : "zap";
+        const angle = (Math.PI * 2 * i) / count;
+        const distance = (isCorrect ? 100 : 62) + Math.random() * (isCorrect ? 130 : 40);
+        node.style.left = `${x}px`;
+        node.style.top = `${y}px`;
+        node.style.background = colors[i % colors.length];
+        node.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+        node.style.setProperty("--dy", `${Math.sin(angle) * distance + (isCorrect ? -30 : 50)}px`);
+        node.style.setProperty("--rot", `${Math.random() * 720 - 360}deg`);
+        els.fxLayer.appendChild(node);
+        setTimeout(() => node.remove(), 920);
+      }
+    }
+
+    function setActiveButtons() {
+      document.querySelectorAll("[data-mode]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === state.mode);
+      });
+      document.querySelectorAll("[data-filter]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.filter === state.filter);
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    document.querySelectorAll("[data-mode]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.mode = btn.dataset.mode;
+        setActiveButtons();
+        startDeck();
+      });
+    });
+
+    document.querySelectorAll("[data-filter]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.filter = btn.dataset.filter;
+        const visible = chaptersForFilter();
+        if (!visible.some(chapter => chapter.id === state.chapter)) {
+          state.chapter = visible[0]?.id || "1-0";
+        }
+        setActiveButtons();
+        renderChapters();
+        startDeck();
+      });
+    });
+
+    els.nextBtn.addEventListener("click", nextQuestion);
+    els.prevBtn.addEventListener("click", prevQuestion);
+    els.retryBtn.addEventListener("click", retryQuestion);
+    els.againBtn.addEventListener("click", () => {
+      startDeck();
+      snapToQuiz();
+    });
+    els.nextSetBtn.addEventListener("click", startNextSet);
+    els.reviewBtn.addEventListener("click", () => {
+      const reviewDeck = state.lastMisses
+        .map(id => questionBank.find(question => question.id === id))
+        .filter(Boolean);
+      state.mode = "weak";
+      setActiveButtons();
+      startDeck(reviewDeck);
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key >= "1" && event.key <= "4" && !state.answered && !els.quizShell.classList.contains("hidden")) {
+        answer(Number(event.key) - 1);
+      }
+      if (event.key === "Enter" && state.answered && !els.quizShell.classList.contains("hidden")) {
+        nextQuestion();
+      }
+    });
+
+    renderChapters();
+    startDeck();
+  </script>
+</body>
+</html>
